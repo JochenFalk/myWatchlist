@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset=utf-8>
+    <meta name=description content="Create list of your favourite movies">
+    <meta name=keywords content="movies, favourite, watch, list, create">
+    <title>Home - My watchlist</title>
+    <link rel="stylesheet" type="text/css" href="css/listPage.css"/>
+    <link rel="stylesheet" type="text/css" href="css/searchBox.css">
+    <link rel="stylesheet" type="text/css" href="css/alertPopup.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/listPageController.js"></script>
+    <script type="text/javascript" src="js/searchBoxController.js"></script>
+    <script type="text/javascript" src="js/alertPopupController.js"></script>
+    <script type="text/javascript" src="js/cookieController.js"></script>
+    <script type="text/javascript" src="js/animationController.js"></script>
+</head>
+<body class="center">
+<div id="content" class="hide un-hide">
+    <nav class="nav">
+        <div class="logo">
+            <a href="index.html"><img src="images/logo.png" height="40" width="30" alt="Home"/></a>
+        </div>
+        <div class="navButtons"><a href="#">Home</a></div>
+        <div id="login" class="navButtons"><a href="#">Login</a></div>
+        <div class="navButtons"><a href="#">About</a></div>
+        <div class="navButtons"><a href="#">Contact</a></div>
+    </nav>
+    <!--    movie poster slideshow-->
+    <header class="header">
+        <div onclick="nextThumb(1)" class="prevSlide">
+            <span>&#10095;</span>
+        </div>
+        <div class="thumbSlides">
+            <div id="templateThumb" class="hide">
+                <img src="images/default-poster-332x500-borders.png" alt=""/>
+            </div>
+            <div>
+                <div id="newThumb" class="thumb newThumb"><span>+</span></div>
+            </div>
+            <div>
+                <div id="infoThumb" class="thumb infoThumb"><span>This is an info box</span></div>
+            </div>
+        </div>
+        <div onclick="nextThumb(-1)" class="nextSlide">
+            <span>&#10094;</span>
+        </div>
+    </header>
+    <!--    movie slides-->
+    <main class="main">
+        <div id="templateSlide" class="hide">
+            <aside class="aside">
+                <div>
+                    <a class="poster" href="html/moviePage.html"><img
+                            src="images/default-poster-332x500-noborders.png" alt=""/></a>
+                </div>
+            </aside>
+            <section class="section">
+                <div>
+                    <h2>
+                        <a class="title" href="html/moviePage.html">Title could not be found!</a>
+                        <img src="images/yellow_star.png" height="15" width="15" alt=""/>
+                        <span class="rating">0</span>
+                        <img id="templateDeleteButton" src="images/close-150x150.png" alt="">
+                    </h2>
+                    <h2>Plot</h2>
+                    <p class="plot">
+                        Oeps! It seems the plot could not be loaded :(
+                    </p>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="footer hide">
+        <p style="margin: auto;"> Please send us an <a
+                href="mailto:jochenfalk@gmail.com?subject=Movie request">email</a> if you
+            would like to see a particular movie added to this list.
+        </p>
+    </footer>
+</div>
+</body>
+<!--Hidden search box-->
+<div class="searchBox">
+    <div class="searchBox-Inner">
+        <div class="searchBoxPoster">
+            <img id="searchPoster" src="images/default-poster-332x500-borders.png" alt="">
+        </div>
+        <div class="searchBoxText">
+            <h1>Search new movies</h1>
+            <form class="formWrap" action="#" novalidate>
+                <input id="searchBoxTitle" placeholder="Movie title" type="text" required/>
+                <input id="searchBoxYear" placeholder="Movie year (optional)" type="text"/>
+                <input id="searchBoxSearchButton" class="button" value="Search"/>
+                <input id="searchBoxNextButton" class="button" value="Next result"/>
+            </form>
+            <a href="#"><img id="closeSearchBox" src="images/close-150x150.png" alt=""></a>
+        </div>
+        <div class="replyText">
+            <h1 id="replyTitle">No movie was found :(</h1>
+            <p id="replyOverview">...</p>
+            <form class="formWrap" action="#">
+                <input id="replyTextAddButton" class="button" value="Add movie"/>
+            </form>
+            <img id="refreshSearchBox" src="images/refresh-150x150.png" alt="">
+        </div>
+    </div>
+</div>
+<!--Hidden alert-->
+<div class="notify">
+    <span id="notifyType" class=""></span>
+</div>
+</html>

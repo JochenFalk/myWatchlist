@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=utf-8>
+    <meta name=description content="A list of movies generated from calling TMDB API">
+    <meta name=keywords content="movies, favourite, watch, list, create">
+    <title>Movie page - My watchlist</title>
+    <link rel="stylesheet" type="text/css" href="../css/moviePage.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/searchBox.css">
+    <link rel="stylesheet" type="text/css" href="../css/alertPopup.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/moviePageController.js"></script>
+    <script type="text/javascript" src="../js/alertPopupController.js"></script>
+    <script type="text/javascript" src="../js/searchBoxController.js"></script>
+    <script type="text/javascript" src="../js/cookieController.js"></script>
+</head>
+<body class="center" onload="initMoviePage()">
+<div id="content" class="hide un-hide">
+    <nav class="nav">
+        <div class="logo">
+            <a href="../index.html"><img
+                    src="../images/logo.png"
+                    height="40" width="30" alt="Home"/></a>
+        </div>
+        <div class="navButtons"><a href="#">Home</a></div>
+        <div class="navButtons"><a href="#">Login</a></div>
+        <div class="navButtons"><a href="#">About</a></div>
+        <div class="navButtons"><a href="#">Contact</a></div>
+    </nav>
+    <header class="header">
+        <img src="" alt="Movie Poster"/>
+    </header>
+    <main class="main">
+        <div>
+            <h2>
+                <span class="title">Title could not be found!</span>
+                <img src="../images/yellow_star.png" height="15" width="15" alt=""/>
+                <span class="rating">0</span>
+            </h2>
+            <h2>Plot</h2>
+            <p class="plot">
+                Oeps! It seems the plot could not be loaded :(
+            </p>
+        </div>
+    </main>
+    <section class="slide">
+        <aside class="aside">
+            <a class="poster"><img src="" title="Click to expand" alt="Movie poster"/></a>
+        </aside>
+        <section class="section">
+            <span>
+                <br>
+                <h3>Director: </h3>
+                <h4>
+                    <a class="crewDirector" href="#"></a>
+                </h4>
+            </span>
+            <span>
+                <br><br>
+                <h3>Writers: </h3>
+                <h4>
+                    <a class="crewWriter" href="#"></a>,
+                    <a class="crewWriter" href="#"></a>
+                </h4>
+            </span>
+            <span>
+                <br><br>
+                <h3>Stars: </h3>
+                <h4>
+                    <a class="castName" href="#"></a>,
+                    <a class="castName" href="#"></a>,
+                    <a class="castName" href="#"></a>
+                </h4>
+            </span>
+            <span class="movie_cast">
+                <br><br><br>
+                    <img class="castPoster" src=""
+                         title="Movie cast" alt=""/>
+                    <img class="castPoster" src=""
+                         title="Movie cast" alt=""/>
+                    <img class="castPoster" src=""
+                         title="Movie cast" alt=""/>
+            </span>
+<!--            <span>-->
+<!--                <br>-->
+<!--                <a href="https://www.imdb.com/title/tt0816692/fullcredits/?ref_=tt_ov_st_sm">See full cast & crew on IMDB</a>-->
+<!--            </span>-->
+        </section>
+    </section>
+</div>
+<!--Hidden alert-->
+<div class="notify">
+    <span id="notifyType" class=""></span>
+</div>
+</body>
+</html>
