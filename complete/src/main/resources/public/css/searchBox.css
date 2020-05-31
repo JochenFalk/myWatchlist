@@ -27,7 +27,7 @@
     min-height: 250px;
     max-height: 600px;
     background-color: #222426;
-    transform: rotate(32deg);
+    transform: rotate(64deg);
     transition: .64s ease-in-out;
 }
 .showSearchBox {
@@ -189,14 +189,3 @@
 #searchBoxNextButton {
     display: none;
 }
-
-/*#searchBox:target {*/
-/*    visibility: visible;*/
-/*    opacity: 1;*/
-/*}*/
-
-/*#searchBox:target .searchBox-Inner {*/
-/*    bottom: 0;*/
-/*    right: 0;*/
-/*    transform: rotate(0);*/
-/*}*/

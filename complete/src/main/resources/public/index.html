@@ -7,10 +7,12 @@
     <title>Home - My watchlist</title>
     <link rel="stylesheet" type="text/css" href="css/listPage.css"/>
     <link rel="stylesheet" type="text/css" href="css/searchBox.css">
+    <link rel="stylesheet" type="text/css" href="css/loginForm.css">
     <link rel="stylesheet" type="text/css" href="css/alertPopup.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/listPageController.js"></script>
-    <script type="text/javascript" src="js/searchBoxController.js"></script>
+    <script type="text/javascript" src="js/searchController.js"></script>
+    <script type="text/javascript" src="js/loginController.js"></script>
     <script type="text/javascript" src="js/alertPopupController.js"></script>
     <script type="text/javascript" src="js/cookieController.js"></script>
     <script type="text/javascript" src="js/animationController.js"></script>
@@ -102,6 +104,32 @@
                 <input id="replyTextAddButton" class="button" value="Add movie"/>
             </form>
             <img id="refreshSearchBox" src="images/refresh-150x150.png" alt="">
+        </div>
+    </div>
+</div>
+<!--Hidden login form-->
+<div class="loginForm">
+    <div class="loginForm-Inner">
+<!--        <div class="searchBoxPoster">-->
+<!--            <img id="searchPoster" src="images/default-poster-332x500-borders.png" alt="">-->
+<!--        </div>-->
+        <div class="loginFormText">
+            <h1>Login</h1>
+            <form class="formWrap" action="#" novalidate>
+                <input id="loginFormUser" placeholder="Username" type="text" required/>
+                <input id="loginFormPass" placeholder="Password" type="text" required/>
+                <input id="loginFormSubmit" class="button" value="Login"/>
+                <input id="loginFormCreate" class="button" value="Create account"/>
+            </form>
+            <a href="#"><img id="closeLoginForm" src="images/close-150x150.png" alt=""></a>
+        </div>
+        <div class="replyText">
+            <h1 id="replyLogin">Oeps! Something went wrong :(</h1>
+            <p id="replyLoginOverview">...</p>
+<!--            <form class="formWrap" action="#">-->
+<!--                <input id="replyTextAddButton" class="button" value="Add movie"/>-->
+<!--            </form>-->
+            <img id="refreshLoginForm" src="images/refresh-150x150.png" alt="">
         </div>
     </div>
 </div>

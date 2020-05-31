@@ -176,7 +176,7 @@ body {
     background-color: dimgray;
 }
 
-.slide .section span > * {
+.slide .section div > * {
     display: inline;
 }
 
