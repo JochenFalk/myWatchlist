@@ -12,6 +12,7 @@ function initGallery() {
     buildMovieList()
     removeHidden();
     $('.replyText').fadeOut();
+    $('.LoginFormReplyText').fadeOut();
     let height = (slideHeight - 10) + "px";
     root.style.setProperty("--slideHeight", height);
     deleteCookie(pushMovie);

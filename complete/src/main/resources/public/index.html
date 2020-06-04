@@ -95,7 +95,7 @@
                 <input id="searchBoxSearchButton" class="button" value="Search"/>
                 <input id="searchBoxNextButton" class="button" value="Next result"/>
             </form>
-            <a href="#"><img id="closeSearchBox" src="images/close-150x150.png" alt=""></a>
+            <img id="closeSearchBox" src="images/close-150x150.png" alt="">
         </div>
         <div class="replyText">
             <h1 id="replyTitle">No movie was found :(</h1>
@@ -110,26 +110,43 @@
 <!--Hidden login form-->
 <div class="loginForm">
     <div class="loginForm-Inner">
-<!--        <div class="searchBoxPoster">-->
-<!--            <img id="searchPoster" src="images/default-poster-332x500-borders.png" alt="">-->
-<!--        </div>-->
         <div class="loginFormText">
             <h1>Login</h1>
-            <form class="formWrap" action="#" novalidate>
+            <form class="formWrapLoginForm" novalidate>
                 <input id="loginFormUser" placeholder="Username" type="text" required/>
                 <input id="loginFormPass" placeholder="Password" type="text" required/>
                 <input id="loginFormSubmit" class="button" value="Login"/>
                 <input id="loginFormCreate" class="button" value="Create account"/>
             </form>
-            <a href="#"><img id="closeLoginForm" src="images/close-150x150.png" alt=""></a>
+            <img id="closeLoginForm" src="images/close-150x150.png" alt="">
         </div>
-        <div class="replyText">
-            <h1 id="replyLogin">Oeps! Something went wrong :(</h1>
-            <p id="replyLoginOverview">...</p>
-<!--            <form class="formWrap" action="#">-->
-<!--                <input id="replyTextAddButton" class="button" value="Add movie"/>-->
-<!--            </form>-->
+        <div class="LoginFormReplyText">
+            <h1>Account creation</h1>
+            <form class="formWrapLoginForm" novalidate>
+                <input id="accountCreationUser" placeholder="Username" type="text" required/>
+                <input id="accountCreationPass" placeholder="Password" type="text" required/>
+                <input id="accountCreationEmail" placeholder="example@provider.com" type="text" required/>
+                <input id="accountCreationSubmit" class="button" value="Create account"/>
+            </form>
             <img id="refreshLoginForm" src="images/refresh-150x150.png" alt="">
+            <div id="usernameTooltip" class="tooltip">
+                <img src="images/questionmark-150x150.png" alt="">
+                <span class="tooltipText">
+                    <span>Length: 6 to 12 characters</span><br>
+                    <span>Only alphanumerical characters</span><br>
+                    <span>No consecutive "." or "_"</span><br>
+                    <span>No "." followed by "_" or visa versa</span><br>
+                    <span>No spaces</span></span>
+            </div>
+            <div id="passwordTooltip" class="tooltip">
+                <img src="images/questionmark-150x150.png" alt="">
+                <span class="tooltipText">
+                    <span>Length: 6 to 12 characters</span><br>
+                    <span>Only alphanumerical characters</span><br>
+                    <span>Must contain 1 capital letter</span><br>
+                    <span>Must contain 1 digit</span><br>
+                    <span>No spaces</span></span>
+            </div>
         </div>
     </div>
 </div>
