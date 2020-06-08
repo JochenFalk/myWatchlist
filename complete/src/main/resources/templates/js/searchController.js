@@ -7,8 +7,7 @@ const BASE_BACKDROP_URL = "https://image.tmdb.org/t/p/original";
 const DEFAULT_BACKDROP_URL = "";
 const BASE_CASTPOSTER_URL = "https://image.tmdb.org/t/p/original";
 const DEFAULT_CASTPOSTER_URL = "";
-const FADEOUT_TIME = 250;
-const FADEIN_TIME = 1350;
+
 const listName = "movieList";
 const pushMovie = "moviePush";
 
@@ -36,7 +35,6 @@ let movieWriters = [];
 let movieCastNames = [];
 let movieCastPosters = [];
 
-// Replacing Jquery elements with constants breaks the code??
 // set search box "click" event handlers
 $(function () {
     $('#newThumb').on('click', function () {
@@ -130,7 +128,7 @@ function callSearch(title, year, id, type, query) {
     let requestURL;
     if (query == 'cast' || query == 'crew') {
         requestURL = "https://api.themoviedb.org/3/movie/" + id + "/credits?api_key=" + API_KEY;
-    } else if (query = 'search') {
+    } else if (query == 'search') {
         requestURL = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=en-US&query=" + searchTitle + "&page=1&include_adult=false&year=" + searchYear;
     }
     let request = new XMLHttpRequest();
@@ -287,30 +285,6 @@ function indexElements() {
         }
     }
 }
-
-// var img1 = document.getElementById("img1");
-// img1.addEventListener("click", currentSlide(1));
-//
-// $(function(){
-//  $(thumbs[0]).click(function() {
-//    currentSlide(1);
-//  })
-//  $(thumbs[1]).click(function() {
-//    currentSlide(2);
-//  })
-//  $(thumbs[2]).click(function() {
-//    currentSlide(3);
-//  })
-//  $(thumbs[3]).click(function() {
-//    currentSlide(4);
-//  })
-//  $(thumbs[4]).click(function() {
-//      currentSlide(5);
-//  })
-//  $(thumbs[5]).click(function() {
-//    currentSlide(6);
-//  })
-// });  // initial attempt to add listeners but it didnt seem to work due to IntelliJ bug?
 
 function createEventListenerPoster(i, slide) {
     let poster = slides[i].getElementsByClassName('poster');

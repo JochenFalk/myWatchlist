@@ -9,6 +9,8 @@ public class User {
     private String userPass;
     private String userEmail;
     private Boolean isValidated;
+    private Boolean isRegistered;
+    private int validationAttempts;
     private VerificationEmail verificationEmail;
 
     private static ArrayList<User> users = new ArrayList<>();
@@ -19,6 +21,8 @@ public class User {
         this.userPass = userPass;
         this.userEmail = userEmail;
         this.isValidated = false;
+        this.isRegistered = false;
+        this.validationAttempts = 1;
         this.verificationEmail = new VerificationEmail(userName, userEmail);
         users.add(this);
         System.out.println(User.getUsers());
@@ -68,6 +72,22 @@ public class User {
         this.isValidated = validated;
     }
 
+    public Boolean getRegistered() {
+        return isRegistered;
+    }
+
+    public void setRegistered(Boolean registered) {
+        isRegistered = registered;
+    }
+
+    public int getValidationAttempts() {
+        return validationAttempts;
+    }
+
+    public void setValidationAttempts(int validationAttempts) {
+        this.validationAttempts = validationAttempts;
+    }
+
     public VerificationEmail getVerificationEmail() {
         return verificationEmail;
     }
@@ -84,6 +104,7 @@ public class User {
                 "Password: " + userPass + "; " +
                 "Email: " + userEmail + "; " +
                 "Validated: " + getValidated() + "; " +
+                "Validation attempts: " + getValidationAttempts() + "; " +
                 "Validation email expiry: " + getVerificationEmail().getExpiryDate();
     }
 }

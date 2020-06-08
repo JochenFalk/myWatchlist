@@ -3,6 +3,8 @@ const alertFailureColor = "rgba(198, 40, 40, 1)";
 const root = document.documentElement;
 const shortTimeOut = 1500;
 const longTimeOut = 2500;
+const FADEOUT_TIME = 250;
+const FADEIN_TIME = 1350;
 
 let isSuccess = false;
 let isFailure = false;

@@ -16,19 +16,6 @@ function initGallery() {
     let height = (slideHeight - 10) + "px";
     root.style.setProperty("--slideHeight", height);
     deleteCookie(pushMovie);
-    // test!!!
-    // $('#login').on('click', function () {
-    //     let url = "/user";
-    //     let params = {
-    //         id : 1
-    //     };
-    //     $.getJSON(url, params, printUser);
-    // });
-    //
-    // function printUser(data) {
-    //     console.log(JSON.stringify(data));
-    // }
-    // test!!!
 }
 
 function removeHidden() {

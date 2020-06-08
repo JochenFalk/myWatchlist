@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="css/searchBox.css">
     <link rel="stylesheet" type="text/css" href="css/loginForm.css">
     <link rel="stylesheet" type="text/css" href="css/alertPopup.css">
+    <link rel="stylesheet" type="text/css" href="css/loadingAnimation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/listPageController.js"></script>
     <script type="text/javascript" src="js/searchController.js"></script>
@@ -53,14 +55,14 @@
         <div id="templateSlide" class="hide">
             <aside class="aside">
                 <div>
-                    <a class="poster" href="html/moviePage.html"><img
+                    <a class="poster" href="moviePage.html"><img
                             src="images/default-poster-332x500-noborders.png" alt=""/></a>
                 </div>
             </aside>
             <section class="section">
                 <div>
                     <h2>
-                        <a class="title" href="html/moviePage.html">Title could not be found!</a>
+                        <a class="title" href="moviePage.html">Title could not be found!</a>
                         <img src="images/yellow_star.png" height="15" width="15" alt=""/>
                         <span class="rating">0</span>
                         <img id="templateDeleteButton" src="images/close-150x150.png" alt="">
@@ -99,7 +101,7 @@
         </div>
         <div class="replyText">
             <h1 id="replyTitle">No movie was found :(</h1>
-            <p id="replyOverview">...</p>
+            <p id="replyOverview"></p>
             <form class="formWrap" action="#">
                 <input id="replyTextAddButton" class="button" value="Add movie"/>
             </form>
@@ -114,21 +116,23 @@
             <h1>Login</h1>
             <form class="formWrapLoginForm" novalidate>
                 <input id="loginFormUser" placeholder="Username" type="text" required/>
-                <input id="loginFormPass" placeholder="Password" type="text" required/>
+                <input id="loginFormPass" placeholder="Password" type="password" required/>
                 <input id="loginFormSubmit" class="button" value="Login"/>
                 <input id="loginFormCreate" class="button" value="Create account"/>
             </form>
             <img id="closeLoginForm" src="images/close-150x150.png" alt="">
+            <span toggle="#loginFormPass" class="fa fa-fw fa-eye togglePassword"></span>
         </div>
         <div class="LoginFormReplyText">
             <h1>Account creation</h1>
             <form class="formWrapLoginForm" novalidate>
                 <input id="accountCreationUser" placeholder="Username" type="text" required/>
-                <input id="accountCreationPass" placeholder="Password" type="text" required/>
+                <input id="accountCreationPass" placeholder="Password" type="password" required/>
                 <input id="accountCreationEmail" placeholder="example@provider.com" type="text" required/>
                 <input id="accountCreationSubmit" class="button" value="Create account"/>
             </form>
             <img id="refreshLoginForm" src="images/refresh-150x150.png" alt="">
+            <span toggle="#accountCreationPass" class="fa fa-fw fa-eye togglePassword"></span>
             <div id="usernameTooltip" class="tooltip">
                 <img src="images/questionmark-150x150.png" alt="">
                 <span class="tooltipText">
@@ -148,10 +152,22 @@
                     <span>No spaces</span></span>
             </div>
         </div>
+        <!--        hidden message box-->
+        <div class="loginFormMessage">...</div>
+        <!--        hidden loading animation-->
+        <div class="loader">
+            <div class="loader__spinner">
+                <div class="loader__bar"></div>
+                <div class="loader__bar"></div>
+                <div class="loader__bar"></div>
+                <div class="loader__bar"></div>
+                <div class="loader__bar"></div>
+            </div>
+        </div>
     </div>
 </div>
-<!--Hidden alert-->
-<div class="notify">
-    <span id="notifyType" class=""></span>
-</div>
+    <!--Hidden alert-->
+    <div class="notify">
+        <span id="notifyType" class=""></span>
+    </div>
 </html>
