@@ -10,7 +10,6 @@ function initLogin() {
     $("#accountCreationUser").attr('maxlength', MAX_CHARS);
     $("#accountCreationPass").attr('maxlength', MAX_CHARS);
     $('.loader').fadeOut(0);
-    hideMessage();
 }
 
 function showMessage(msg, color) {
@@ -219,7 +218,7 @@ $(function () {
                     if (responseJSON == true) {
                         $('.formWrapLoginForm').fadeOut(FADEOUT_TIME, function () {
                             $('.loginFormText').find("h1").text("Email sent!");
-                            showMessage('Success! A verification link has been sent to your email.', alertSuccessColor);
+                            showMessage('A verification link has been sent to your email.', alertSuccessColor);
                         });
                     } else if (responseJSON == false) {
                         showMessage('The email address provided is not valid!', alertFailureColor);

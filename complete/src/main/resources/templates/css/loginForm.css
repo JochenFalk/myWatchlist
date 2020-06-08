@@ -2,22 +2,6 @@ input::-ms-reveal, input::-ms-clear {
     display: none;
 }
 
-body {
-    background-color: black;
-    color: black;
-    text-decoration: none;
-    font-family: "Segoe UI", serif;
-    font-size: 62.5%;
-    text-align: center;
-    justify-items: center;
-}
-
-.center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .loginForm {
     display: flex;
     align-items: center;
@@ -31,14 +15,16 @@ body {
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 2;
+    visibility: hidden;
+    /*transition: .64s ease-in-out;*/
 }
 
 .loginForm-Inner {
     display: flex;
     flex-direction: column;
     position: relative;
-    bottom: 0;
-    right: 0;
+    bottom: 100vw;
+    right: 100vh;
     align-items: center;
     width: 50%;
     height: 40%;
@@ -46,10 +32,52 @@ body {
     min-height: 250px;
     max-height: 650px;
     background-color: #222426;
+    transform: rotate(64deg);
+    transition: .64s ease-in-out;
+}
+.showLoginForm {
+    visibility: visible;
+    opacity: 1;
+}
+
+.showLoginForm .loginForm-Inner {
+    bottom: 0;
+    right: 0;
     transform: rotate(0);
 }
 
-.loginFormText {
+#closeLoginForm, #refreshLoginForm {
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    width: 2.7rem;
+    height: 2.7rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 100%;
+    background-color: dimgray;
+    z-index: 4;
+    color: black;
+    line-height: 3rem;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 0.5rem;
+}
+
+#closeLoginForm:hover, #refreshLoginForm:hover {
+    background-color: cadetblue;
+    color: black;
+    transition: .5s;
+}
+
+#closeLoginForm:active, #refreshLoginForm:active {
+    background: dimgray;
+    transition: .5s;
+}
+
+.loginFormText, .LoginFormReplyText {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -58,7 +86,7 @@ body {
     height: 80%;
 }
 
-.loginFormText h1 {
+.loginFormText h1, .LoginFormReplyText h1 {
     font-family: "Segoe UI", serif;
     font-size: calc(1vw + 1.5vh);
     font-weight: normal;
@@ -82,7 +110,7 @@ body {
     -webkit-box-shadow: 0 0 0 30px #222426 inset !important;
 }
 
-.loginFormText input {
+.loginFormText input, .LoginFormReplyText input {
     font-family: "Segoe UI", serif;
     font-size: .9rem;
     font-weight: 200;
@@ -97,11 +125,11 @@ body {
     text-align: center;
 }
 
-.loginFormText input:focus {
+.loginFormText input:focus, .LoginFormReplyText input:focus {
     border-color: cadetblue;
 }
 
-.loginFormText .button {
+.loginFormText .button, .LoginFormReplyText .button {
     font-size: .875rem;
     font-weight: 600;
     width: 90%;
@@ -115,28 +143,88 @@ body {
     outline: none;
 }
 
-.loginFormText .button:hover {
+.loginFormText .button:hover, .LoginFormReplyText .button:hover {
     background: cadetblue;
     transition: .5s;
 }
 
-.loginFormText .button:active {
+.loginFormText .button:active, .LoginFormReplyText .button:active {
     background: dimgray;
     transition: .5s;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltipText {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: dimgray;
+    text-align: left;
+    font-size: .75rem;
+    border-radius: 6px;
+    padding: 5px 5px 5px 7px;
+    position: absolute;
+    top: -175%;
+    right: 175%;
+    z-index: 99;
+}
+
+.tooltip > img {
+    background-color: dimgray;
+    position: relative;
+    right: 0;
+    top: 0;
+    z-index: 4;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 100%;
+    padding: 0.1rem;
+    color: black;
+    cursor: pointer;
+}
+
+.tooltip:hover .tooltipText {
+    visibility: visible;
+}
+
+.tooltip .tooltipText::after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent black;
+}
+
+#usernameTooltip {
+    position: absolute;
+    top: 27.8%;
+    right: 8%;
+}
+
+#passwordTooltip {
+    position: absolute;
+    top: 38.4%;
+    right: 8%;
 }
 
 .loginFormMessage {
     position: relative;
     bottom: 10%;
     font-size: .8rem;
-    color: rgba(67, 160, 71, 1);
     padding: 0 2.5rem 0 2.5rem;
 }
 
 .togglePassword {
     position: relative;
     left: 80px;
-    top: -4.2rem;
+    top: -6.7rem;
     z-index: 4;
     color: dimgray;
     cursor: pointer;
