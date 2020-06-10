@@ -37,8 +37,8 @@ public class UserBusiness {
         Date now = Calendar.getInstance().getTime();
         for (User thisUser : users) {
             boolean verified =
-                    token.equals(thisUser.getVerificationEmail().getUserToken()) &&
-                            now.before(thisUser.getVerificationEmail().getExpiryDate());
+                    token.equals(thisUser.getVerificationEmail().getToken()) &&
+                            now.before(thisUser.getVerificationEmail().getTokenExpiryDate());
             if (verified) {
                 thisUser.setValidated(true);
                 return true;
@@ -62,7 +62,7 @@ public class UserBusiness {
         ArrayList<User> users = User.getUsers();
         int parsedId = Integer.parseInt(id);
         for (User thisUser : users) {
-            if (thisUser.getUserId() == parsedId) {
+            if (thisUser.getId() == parsedId) {
                 return thisUser;
             }
         }
@@ -72,7 +72,7 @@ public class UserBusiness {
     public static User getUserByEmail(String userEmail) {
         ArrayList<User> users = User.getUsers();
         for (User thisUser : users) {
-            if (thisUser.getUserEmail().equals(userEmail)) {
+            if (thisUser.getEmail().equals(userEmail)) {
                 return thisUser;
             }
         }
@@ -84,8 +84,8 @@ public class UserBusiness {
         BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(STRENGTH);
         for (User thisUser : users) {
             boolean validated =
-                    userName.equals(thisUser.getUserName()) &&
-                            userPassEncoder.matches(userPass, thisUser.getUserPass()) &&
+                    userName.equals(thisUser.getName()) &&
+                            userPassEncoder.matches(userPass, thisUser.getPassword()) &&
                             thisUser.getValidated();
             if (validated) {
                 thisUser.setRegistered(true);
@@ -100,8 +100,8 @@ public class UserBusiness {
         BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(STRENGTH);
         for (User thisUser : users) {
             boolean exists =
-                    userName.equals(thisUser.getUserName()) &&
-                            userPassEncoder.matches(userPass, thisUser.getUserPass());
+                    userName.equals(thisUser.getName()) &&
+                            userPassEncoder.matches(userPass, thisUser.getPassword());
             if (exists) {
                 JSONObject msg = new JSONObject();
                 if (!thisUser.getValidated()) {
@@ -124,7 +124,7 @@ public class UserBusiness {
     public static Boolean isRegisteredUser(String userEmail) {
         ArrayList<User> users = User.getUsers();
         for (User thisUser : users) {
-            if (thisUser.getUserEmail().equals(userEmail)) {
+            if (thisUser.getEmail().equals(userEmail)) {
                 return true;
             }
         }

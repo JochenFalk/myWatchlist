@@ -3,6 +3,7 @@ package com.company.data;
 import java.util.Properties;
 
 public class EmailConfig {
+
     private String userName;
     private String userPass;
 

@@ -18,8 +18,8 @@ public class EmailBusiness {
 
     public static void sendConfirmationEmail(User user) {
 
-        String userEmail = user.getUserEmail();
-        String userToken = user.getVerificationEmail().getUserToken();
+        String userEmail = user.getEmail();
+        String userToken = user.getVerificationEmail().getToken();
 
         Session session = Session.getDefaultInstance(emailConfig.getMailProperties(), new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -55,12 +55,12 @@ public class EmailBusiness {
 
     public static void resendConfirmationEmail(User user) {
 
-        String userEmail = user.getUserEmail();
+        String userEmail = user.getEmail();
         user.setVerificationEmail();
         int validationAttempts = user.getValidationAttempts();
         validationAttempts++;
         user.setValidationAttempts(validationAttempts);
-        String userToken = user.getVerificationEmail().getUserToken();
+        String userToken = user.getVerificationEmail().getToken();
 
         Session session = Session.getDefaultInstance(emailConfig.getMailProperties(), new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {

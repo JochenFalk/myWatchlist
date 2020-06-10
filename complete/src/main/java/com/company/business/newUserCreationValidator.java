@@ -43,7 +43,7 @@ public class newUserCreationValidator implements iUserCreationEventListener {
     public static Boolean isExistingUserName(String userNameValidated) {
         ArrayList<User> users = User.getUsers();
         for (User thisUser : users) {
-            if (userNameValidated.equals(thisUser.getUserName())) {
+            if (userNameValidated.equals(thisUser.getName())) {
                 return true;
             }
         }
@@ -65,7 +65,7 @@ public class newUserCreationValidator implements iUserCreationEventListener {
     public static Boolean isExistingUserEmail(String userEmailValidated) {
         ArrayList<User> users = User.getUsers();
         for (User thisUser : users) {
-            if (userEmailValidated.equals(thisUser.getUserEmail())) {
+            if (userEmailValidated.equals(thisUser.getEmail())) {
                 return true;
             }
         }

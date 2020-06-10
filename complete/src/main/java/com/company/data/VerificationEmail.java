@@ -11,8 +11,8 @@ public class VerificationEmail {
 
     private String userName;
     private String userEmail;
-    private String userToken;
-    private Date expiryDate;
+    private String token;
+    private Date tokenExpiryDate;
 
     private static final int EXPIRY_TIME = 60 * 24;
     private static final SecureRandom secureRandom = new SecureRandom();
@@ -23,8 +23,8 @@ public class VerificationEmail {
     public VerificationEmail(String userName, String userEmail) {
         this.userName = userName;
         this.userEmail = userEmail;
-        this.userToken = generateNewToken();
-        this.expiryDate = generateExpiryDate();
+        this.token = generateNewToken();
+        this.tokenExpiryDate = generateExpiryDate();
         verificationEmails.add(this);
     }
 
@@ -57,19 +57,19 @@ public class VerificationEmail {
         this.userEmail = userEmail;
     }
 
-    public String getUserToken() {
-        return userToken;
+    public String getToken() {
+        return token;
     }
 
-    public void setUserToken(String userToken) {
-        this.userToken = userToken;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public Date getExpiryDate() {
-        return expiryDate;
+    public Date getTokenExpiryDate() {
+        return tokenExpiryDate;
     }
 
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setTokenExpiryDate(Date tokenExpiryDate) {
+        this.tokenExpiryDate = tokenExpiryDate;
     }
 }

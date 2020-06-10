@@ -35,7 +35,6 @@ let movieWriters = [];
 let movieCastNames = [];
 let movieCastPosters = [];
 
-// set search box "click" event handlers
 $(function () {
     $('#newThumb').on('click', function () {
         $('.searchBox').addClass('showSearchBox');
@@ -68,12 +67,15 @@ $(function () {
         searchObject = 0;
         if (document.querySelector('#searchBoxTitle').value !== "") {
             alertSuccess("Fetching movie info", shortTimeOut);
-            callSearch('', '', '', 'searchBox', 'search');
+            let title = document.querySelector('#searchBoxTitle').value;
+            let year = document.querySelector('#searchBoxYear').value;
+            callSearch(title, year, "", "searchBox", "search");
         } else {
             alertFailure("Movie title is required for a search", longTimeOut);
         }
     })
 });
+
 
 $(function () {
     $('#searchBoxNextButton').on('click', function () {
@@ -118,42 +120,37 @@ function resetSearchBox() {
 }
 
 function callSearch(title, year, id, type, query) {
-    if (type == 'searchBox') {
-        searchTitle = document.querySelector('#searchBoxTitle').value;
-        searchYear = document.querySelector('#searchBoxYear').value;
-    } else if (type == 'update' || type == 'build') {
-        searchTitle = title;
-        searchYear = year;
-    }
-    let requestURL;
-    if (query == 'cast' || query == 'crew') {
-        requestURL = "https://api.themoviedb.org/3/movie/" + id + "/credits?api_key=" + API_KEY;
-    } else if (query == 'search') {
-        requestURL = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=en-US&query=" + searchTitle + "&page=1&include_adult=false&year=" + searchYear;
-    }
-    let request = new XMLHttpRequest();
-    try {
-        request.open('GET', requestURL);
-        request.responseType = 'json';
-        request.timeout = 5000;
-        request.send();
-        request.onload = function () {
-            let results;
+    let url;
+    let parameters;
+    searchTitle = title;
+    searchYear = year;
 
-            if (query == 'cast') {
-                results = request.response["cast"];
-            } else if (query == 'crew') {
-                results = request.response["crew"];
-            } else if (query == 'search') {
-                results = request.response.results;
-            }
-            processSearch(results, type, query);
+    if (query == 'cast' || query == 'crew') {
+        url = "/searchById";
+        parameters = {
+            searchId: id,
+        };
+
+    } else if (query == 'search') {
+        url = "/searchByTitle";
+        parameters = {
+            searchTitle: title,
+            searchYear: year
+        };
+    }
+
+    $.getJSON(url, parameters, searchReturn);
+
+    function searchReturn(data) {
+        let results;
+        if (query == 'cast') {
+            results = data["cast"];
+        } else if (query == 'crew') {
+            results = data["crew"];
+        } else if (query == 'search') {
+            results = data.results;
         }
-        request.ontimeout = function () {
-            alertFailure("Could not reach the server. The connection timed out :(", longTimeOut);
-        }
-    } catch (e) {
-        alertFailure("An unknown error has occurred :(", longTimeOut);
+        processSearch(results, type, query)
     }
 }
 

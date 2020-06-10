@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class User {
 
-    private final long userId;
-    private String userName;
-    private String userPass;
-    private String userEmail;
+    private final long id;
+    private String name;
+    private String password;
+    private String email;
     private Boolean isValidated;
     private Boolean isRegistered;
     private int validationAttempts;
@@ -15,45 +15,45 @@ public class User {
 
     private static ArrayList<User> users = new ArrayList<>();
 
-    public User(long userId, String userName, String userPass, String userEmail) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userPass = userPass;
-        this.userEmail = userEmail;
+    public User(long id, String name, String password, String email) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.email = email;
         this.isValidated = false;
         this.isRegistered = false;
         this.validationAttempts = 1;
-        this.verificationEmail = new VerificationEmail(userName, userEmail);
+        this.verificationEmail = new VerificationEmail(name, email);
         users.add(this);
         System.out.println(User.getUsers());
     }
 
-    public long getUserId() {
-        return userId;
+    public long getId() {
+        return id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getUserPass() {
-        return userPass;
+    public String getPassword() {
+        return password;
     }
 
-    public void setUserPass(String userPass) {
-        this.userPass = userPass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public static ArrayList getUsers() {
@@ -93,18 +93,18 @@ public class User {
     }
 
     public void setVerificationEmail() {
-        this.verificationEmail = new VerificationEmail(userName, userEmail);
+        this.verificationEmail = new VerificationEmail(name, email);
     }
 
     @Override
     public String toString() {
         return "\n" +
-                "UserId: " + userId + "; " +
-                "Username: " + userName + "; " +
-                "Password: " + userPass + "; " +
-                "Email: " + userEmail + "; " +
+                "UserId: " + id + "; " +
+                "Username: " + name + "; " +
+                "Password: " + password + "; " +
+                "Email: " + email + "; " +
                 "Validated: " + getValidated() + "; " +
                 "Validation attempts: " + getValidationAttempts() + "; " +
-                "Validation email expiry: " + getVerificationEmail().getExpiryDate();
+                "Validation email expiry: " + getVerificationEmail().getTokenExpiryDate();
     }
 }
