@@ -1,6 +1,9 @@
 package com.company.business;
 
+import com.company.data.PostgreSystemQueries;
+import com.company.data.model.Search;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -11,70 +14,265 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SearchBusiness {
 
-    private static int results;
-    private Properties movieProperties = new Properties();
     private static final String API_KEY = "1c0a5b80ba526a387cb22c7d79fbeb03";
+    private static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/original";
+    private static final String DEFAULT_POSTER_URL = "../resources/images/default-poster-332x500-noborders.png";
+    private static final String BASE_BACKDROP_URL = "https://image.tmdb.org/t/p/original";
+    private static final String DEFAULT_BACKDROP_URL = "../resources/images/backdrop-3200x1800.jpg";
+    private static final String BASE_CASTPOSTER_URL = "https://image.tmdb.org/t/p/original";
+    private static final String DEFAULT_CASTPOSTER_URL = "../resources/images/profile-700x1050.png";
+    private static final String BASE_VIDEO_URL = "https://www.youtube.com/embed/";
+    private static final String APPEND_VIDEO_URL = "?enablejsapi=1&amp;version=3&amp;playerapiid=ytplayer&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;rel=0&amp;loop=1";
 
-    public static String searchByTitle(String title, String year) {
+    private static final int MAX_CAST = 12;
 
-        String regexTitle = title.replaceAll("\\s","%20");
-        String requestURL = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=en-US&query=" + regexTitle + "&page=1&include_adult=false&year=" + year;
-        HttpGet request = new HttpGet(requestURL);
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(request)) {
-
-//            System.out.println(response.getStatusLine().getStatusCode());
-
-            HttpEntity entity = response.getEntity();
-
-            if (entity != null) {
-
-                String result = EntityUtils.toString(entity);
-                JSONObject obj = (JSONObject) JSONValue.parse(result);
-                JSONArray arr = (JSONArray)obj.get("results");
-                JSONObject results = (JSONObject) arr.get(0);
-
-                System.out.println(results.get("title"));
-
-//                Search search = new Search(title, searchYear);
-
-                return result;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return "";
+    public static Search newSearch(String title, String year, int returnValue) {
+        return search(title, year, returnValue);
     }
 
-    public static String searchById(String id) {
+    public static Search newSearch(String title, String year) {
+        int returnValue = 0;
+        return search(title, year, returnValue);
+    }
 
-        String requestURL = "https://api.themoviedb.org/3/movie/" + id + "/credits?api_key=" + API_KEY;
-        HttpGet request = new HttpGet(requestURL);
+    public static Search search(String title, String year, int returnValue) {
+
+        Search search = new Search(title, year, returnValue);
+
+        String noSpacesTitle = title.replaceAll("\\s+", "%20");
+        String titleSearchURL = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=en-US&query=" + noSpacesTitle + "&page=1&include_adult=false&year=" + year;
+        HttpGet titleSearch = new HttpGet(titleSearchURL);
+
+        // set connection time out on request level.
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(5000)
+                .setConnectTimeout(5000)
+                .setSocketTimeout(5000)
+                .build();
+
+        titleSearch.setConfig(requestConfig);
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(request)) {
-
-//            System.out.println(response.getStatusLine().getStatusCode());
+             CloseableHttpResponse response = httpClient.execute(titleSearch)) {
 
             HttpEntity entity = response.getEntity();
 
             if (entity != null) {
-                String result = EntityUtils.toString(entity);
-                System.out.println(result);
-                return result;
+
+                String string = EntityUtils.toString(entity); // parse response to string (output is JSON)
+                JSONObject object = (JSONObject) JSONValue.parse(string); // create JObject with results
+                JSONArray array = (JSONArray) object.get("results"); // get array "results"
+
+                if (array.size() != 0 && (array.size() > returnValue)) {
+
+                    JSONObject result = (JSONObject) array.get(returnValue); // create JObject with result
+                    processSearch(search, result);
+                    getExtendedSearch(search);
+
+                    return search;
+                }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return "";
+        // set identifier for null
+        search.setReturnValue(-1);
+        return search;
+    }
+
+    public static void getExtendedSearch(Search search) {
+
+        String id = search.getResults().get("id");
+        String idSearchURL = "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + API_KEY + "&append_to_response=credits,videos";
+        HttpGet idSearch = new HttpGet(idSearchURL);
+
+        // set connection time out on request level.
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(5000)
+                .setConnectTimeout(5000)
+                .setSocketTimeout(5000)
+                .build();
+
+        idSearch.setConfig(requestConfig);
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(idSearch)) {
+
+            HttpEntity entity = response.getEntity();
+
+            if (entity != null) {
+
+                String result = EntityUtils.toString(entity); // parse response to string (output is JSON)
+                JSONObject obj = (JSONObject) JSONValue.parse(result); // create JObject with results
+                JSONObject credits = (JSONObject) obj.get("credits"); // create JObject with credits
+                JSONObject videos = (JSONObject) obj.get("videos"); // create JObject with videos
+                JSONArray cast = (JSONArray) credits.get("cast"); // get array "cast"
+                JSONArray crew = (JSONArray) credits.get("crew"); // get array "crew"
+
+                processExtendedSearch(search, cast, crew, videos);
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Search retrieveSearch(String title, String year) {
+        ArrayList<Search> searches = Search.getSearches();
+        for (Search thisSearch : searches) {
+            boolean found =
+                    title.equals(thisSearch.getTitle()) &&
+                            year.equals(thisSearch.getYear());
+            if (found) {
+                return thisSearch;
+            }
+        }
+        return null;
+    }
+
+    private static void processSearch(Search search, JSONObject result) {
+
+        HashMap<String, String> resultMap = new HashMap<>();
+
+        search.setTitle(result.get("title").toString());
+        String[] releaseDate = result.get("release_date").toString().split("-");
+        String releaseYear = releaseDate[0];
+        search.setYear(releaseYear);
+
+        // set and check poster path
+        String moviePoster = DEFAULT_POSTER_URL;
+        if (result.get("poster_path") != null) {
+            moviePoster = BASE_IMAGE_URL + result.get("poster_path").toString();
+            if (moviePoster.substring(moviePoster.length() - 4) == "null") {
+                moviePoster = DEFAULT_POSTER_URL;
+            }
+        }
+        // set and check backdrop path
+        String movieBackDrop = DEFAULT_BACKDROP_URL;
+        if (result.get("backdrop_path") != null) {
+            movieBackDrop = BASE_BACKDROP_URL + result.get("backdrop_path").toString();
+            if (movieBackDrop.substring(movieBackDrop.length() - 4) == "null") {
+                movieBackDrop = DEFAULT_BACKDROP_URL;
+            }
+        }
+
+        resultMap.put("release_year", releaseYear);
+        resultMap.put("poster_url", moviePoster);
+        resultMap.put("backdrop_url", movieBackDrop);
+
+        for (Object keyString : result.keySet()) {
+            Object keyValue = result.get(keyString);
+            if (result.get(keyString) != null) {
+                resultMap.put(keyString.toString(), keyValue.toString());
+            }
+        }
+
+        search.setResults(resultMap);
+        PostgreSystemQueries.insertSearch(search);
+    }
+
+    private static void processExtendedSearch(Search search, JSONArray cast, JSONArray crew, JSONObject videos) {
+
+        ArrayList<Object> newCast = new ArrayList<>();
+        ArrayList<Object> newCrew = new ArrayList<>();
+
+        int listEnd = (int) clamp(cast.size(), cast.size(), MAX_CAST);
+
+        for (int i = 0; i < listEnd; i++) {
+
+            JSONObject castObject = (JSONObject) cast.get(i);
+            HashMap<String, String> castMap = new HashMap<>();
+
+            String id = castObject.get("id").toString();
+            String name = castObject.get("name").toString();
+            String character = castObject.get("character").toString();
+
+            String profilePathUrl = DEFAULT_CASTPOSTER_URL;
+
+            if (castObject.get("profile_path") != null) {
+                String profilePath = castObject.get("profile_path").toString();
+                if (!profilePath.isEmpty()) {
+                    profilePathUrl = BASE_CASTPOSTER_URL + profilePath;
+                }
+            }
+
+            castMap.put("id", id);
+            castMap.put("name", name);
+            castMap.put("character", character);
+            castMap.put("profile_url", profilePathUrl);
+
+            newCast.add(castMap);
+
+        }
+
+        for (Object thisObject : crew) {
+
+            JSONObject thisCrew = (JSONObject) thisObject;
+            HashMap<String, String> crewMap = new HashMap<>();
+
+            String id = thisCrew.get("id").toString();
+            String name = thisCrew.get("name").toString();
+            String job = thisCrew.get("job").toString();
+
+            if (job.equals("Director") || job.equals("Writer")) {
+
+                String profilePathUrl = DEFAULT_CASTPOSTER_URL;
+
+                if (thisCrew.get("profile_path") != null) {
+                    String profilePath = thisCrew.get("profile_path").toString();
+                    if (!profilePath.isEmpty()) {
+                        profilePathUrl = BASE_CASTPOSTER_URL + profilePath;
+                    }
+                }
+
+                crewMap.put("id", id);
+                crewMap.put("name", name);
+                crewMap.put("job", job);
+                crewMap.put("profile_url", profilePathUrl);
+
+                newCrew.add(crewMap);
+            }
+        }
+
+        String videoURL;
+        JSONArray array = (JSONArray) videos.get("results"); // get array "results"
+
+        if (array.size() != 0) {
+            JSONObject result = (JSONObject) array.get(0); // get result
+            if (result.get("key") != null) {
+
+                HashMap<String, String> results = search.getResults();
+                HashMap<String, String> resultMap = new HashMap<>();
+
+                videoURL = BASE_VIDEO_URL + result.get("key").toString() + APPEND_VIDEO_URL;
+
+                resultMap.put("video_url", videoURL);
+
+                for (Object keyString : results.keySet()) {
+                    Object keyValue = results.get(keyString);
+                    if (results.get(keyString) != null) {
+                        resultMap.put(keyString.toString(), keyValue.toString());
+                    }
+                }
+                search.setResults(resultMap);
+            }
+        }
+
+        search.setCast(newCast);
+        search.setCrew(newCrew);
+//        Search.addSearches(search);
+        PostgreSystemQueries.updateSearch(search);
+    }
+
+    public static float clamp(float val, float min, float max) {
+        return Math.min(Math.max(val, min), max);
     }
 }

@@ -1,0 +1,45 @@
+:root {
+    --backgroundColor: rgba(0, 0, 0, 1);
+}
+.notify {
+    display: none;
+    position: fixed;
+    bottom: 1rem;
+    left: 100%;
+    width: max-content;
+    height: 2rem;
+    z-index: 99;
+    color: black;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: var(--backgroundColor);
+    border-radius: 1rem;
+    overflow: hidden;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+#notifyType:before {
+    display: block;
+    margin-top: .3rem;
+}
+
+.active {
+    display: block;
+    left: auto;
+    animation-fill-mode: both;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.success:before {
+    Content: "";
+}
+
+.failure:before {
+    Content: "";
+}
+
+@keyframes fadeIn {
+    from{opacity: 0}
+    to{opacity: 1}
+}

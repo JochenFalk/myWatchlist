@@ -1,8 +1,8 @@
 package com.company.business;
 
-import com.company.data.User;
+import com.company.data.PostgreSystemQueries;
+import com.company.data.model.User;
 import net.minidev.json.JSONObject;
-import org.apache.commons.validator.routines.EmailValidator;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,8 +10,9 @@ import java.util.regex.Pattern;
 
 public class newUserCreationValidator implements iUserCreationEventListener {
 
-    private static final String USERNAME_REGEX = "^[aA-zZ]\\w{5,11}$";
-    private static final String USERPASS_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{5,11}$";
+    private static final String USERNAME_REGEX = "^[a-zA-Z0-9_]{6,12}$";
+    private static final String USERPASS_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,12}$";
+    private static final String USEREMAIL_REGEX = "^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
     @Override
     public String validate(String userNameValidated, String userPassValidated, String userEmailValidated) {
@@ -31,7 +32,7 @@ public class newUserCreationValidator implements iUserCreationEventListener {
             JSONObject msg = new JSONObject();
             msg.put("msg", "The provided email is already registered with another user");
             return msg.toString();
-        } else if (!validateUserEmail(userEmailValidated)) {
+        } else if (!validateUserEmail(userEmailValidated) && !userEmailValidated.isEmpty()) {
             JSONObject msg = new JSONObject();
             msg.put("msg", "The provided email is not valid. Please check the tooltip for requirements");
             return msg.toString();
@@ -41,9 +42,19 @@ public class newUserCreationValidator implements iUserCreationEventListener {
     }
 
     public static Boolean isExistingUserName(String userNameValidated) {
-        ArrayList<User> users = User.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
         for (User thisUser : users) {
             if (userNameValidated.equals(thisUser.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Boolean isExistingUserEmail(String userEmailValidated) {
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        for (User thisUser : users) {
+            if (userEmailValidated.equals(thisUser.getEmailAddress())) {
                 return true;
             }
         }
@@ -62,22 +73,9 @@ public class newUserCreationValidator implements iUserCreationEventListener {
         return  matcher.matches();
     }
 
-    public static Boolean isExistingUserEmail(String userEmailValidated) {
-        ArrayList<User> users = User.getUsers();
-        for (User thisUser : users) {
-            if (userEmailValidated.equals(thisUser.getEmail())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static Boolean validateUserEmail(String userEmailValidated) {
-        EmailValidator validator = EmailValidator.getInstance();
-        if (!validator.isValid(userEmailValidated)) {
-            System.out.println();
-            return false;
-        }
-        return true;
+        Pattern pattern = Pattern.compile(USEREMAIL_REGEX);
+        Matcher matcher = pattern.matcher(userEmailValidated);
+        return  matcher.matches();
     }
 }

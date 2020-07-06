@@ -1,17 +1,62 @@
 package com.company.business;
 
-import com.company.data.User;
+import com.company.data.PostgreSystemQueries;
+import com.company.data.model.User;
 import net.minidev.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.servlet.http.HttpSession;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class UserBusiness {
 
-    private static long userCount;
-    private static final int STRENGTH = 16;
+    private static final int COST = 16;
+    private static final int SESSION_TIME = 15 * 60;
+
+    public static Boolean getLoginStatus(HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            String userName = session.getAttribute("username").toString();
+            User user = PostgreSystemQueries.getUserByName(userName);
+            if (user != null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static Boolean logOut(HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            String userName = session.getAttribute("username").toString();
+            User user = PostgreSystemQueries.getUserByName(userName);
+            if (user != null) {
+                session.invalidate();
+                System.out.println("Log out by: " + userName);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static Boolean deleteAccount(HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            String userName = session.getAttribute("username").toString();
+            User user = PostgreSystemQueries.getUserByName(userName);
+            if (user != null) {
+                session.invalidate();
+                PostgreSystemQueries.deleteUserById(user.getId());
+                System.out.println("Account deleted: " + session.getAttribute("username"));
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
 
     public static String createUser(String userName, String userPass, String userEmail) {
 
@@ -22,34 +67,33 @@ public class UserBusiness {
         String validationMessage = userFieldValidator.setUserFieldValidation(userName, userPass, userEmail);
 
         if (validationMessage.equals("true")) {
-            userCount++;
-            BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(STRENGTH);
-            String userPassCrypted = userPassEncoder.encode(userPass);
-            long userId = userCount;
-            User user = new User(userId, userName, userPassCrypted, userEmail);
+            String userPassCrypted = encryptPassword(userPass);
+            User user = new User(userName, userPassCrypted, userEmail);
             EmailBusiness.sendConfirmationEmail(user);
+            PostgreSystemQueries.insertUser(user);
         }
         return validationMessage;
     }
 
     public static Boolean verifyRegistration(String token) {
-        ArrayList<User> users = User.getUsers();
-        Date now = Calendar.getInstance().getTime();
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        Instant now = Instant.now();
         for (User thisUser : users) {
             boolean verified =
-                    token.equals(thisUser.getVerificationEmail().getToken()) &&
-                            now.before(thisUser.getVerificationEmail().getTokenExpiryDate());
+                    token.equals(thisUser.getToken()) &&
+                            now.isBefore(thisUser.getTokenExpiryDate());
             if (verified) {
                 thisUser.setValidated(true);
+                PostgreSystemQueries.updateUser(thisUser);
                 return true;
             }
         }
         return false;
     }
 
-    public static Boolean requestLink(String userEmail) {
-        if (isRegisteredUser(userEmail)) {
-            User user = getUserByEmail(userEmail);
+    public static Boolean requestLink(String emailAddress) {
+        if (login(emailAddress)) {
+            User user = getUserByEmail(emailAddress);
             if (user != null) {
                 EmailBusiness.resendConfirmationEmail(user);
                 return true;
@@ -59,7 +103,7 @@ public class UserBusiness {
     }
 
     public static User getUserById(String id) {
-        ArrayList<User> users = User.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
         int parsedId = Integer.parseInt(id);
         for (User thisUser : users) {
             if (thisUser.getId() == parsedId) {
@@ -69,35 +113,39 @@ public class UserBusiness {
         return null;
     }
 
-    public static User getUserByEmail(String userEmail) {
-        ArrayList<User> users = User.getUsers();
+    public static User getUserByEmail(String emailAddress) {
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
         for (User thisUser : users) {
-            if (thisUser.getEmail().equals(userEmail)) {
+            if (thisUser.getEmailAddress().equals(emailAddress)) {
                 return thisUser;
             }
         }
         return null;
     }
 
-    public static Boolean isVerifiedUser(String userName, String userPass) {
-        ArrayList<User> users = User.getUsers();
-        BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(STRENGTH);
+    public static Boolean isVerifiedUser(String userName, String userPass, HttpSession session) {
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(COST);
         for (User thisUser : users) {
-            boolean validated =
+            boolean exists =
                     userName.equals(thisUser.getName()) &&
                             userPassEncoder.matches(userPass, thisUser.getPassword()) &&
                             thisUser.getValidated();
-            if (validated) {
+            if (exists) {
                 thisUser.setRegistered(true);
+                PostgreSystemQueries.updateUser(thisUser);
+                session.setAttribute("username", thisUser.getName());
+                session.setMaxInactiveInterval(SESSION_TIME);
+                System.out.println("Login by: " + session.getAttribute("username"));
                 return true;
             }
         }
         return false;
     }
 
-    public static String isRegisteredUser(String userName, String userPass) {
-        ArrayList<User> users = User.getUsers();
-        BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(STRENGTH);
+    public static String login(String userName, String userPass, HttpSession session) {
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(COST);
         for (User thisUser : users) {
             boolean exists =
                     userName.equals(thisUser.getName()) &&
@@ -113,6 +161,9 @@ public class UserBusiness {
                 } else {
                     boolean registered = thisUser.getValidated() && thisUser.getRegistered();
                     if (registered) {
+                        session.setAttribute("username", thisUser.getName());
+                        session.setMaxInactiveInterval(SESSION_TIME);
+                        System.out.println("Login by: " + session.getAttribute("username"));
                         return "true";
                     }
                 }
@@ -121,13 +172,18 @@ public class UserBusiness {
         return "false";
     }
 
-    public static Boolean isRegisteredUser(String userEmail) {
-        ArrayList<User> users = User.getUsers();
+    public static Boolean login(String userEmail) {
+        ArrayList<User> users = PostgreSystemQueries.getUsers();
         for (User thisUser : users) {
-            if (thisUser.getEmail().equals(userEmail)) {
+            if (thisUser.getEmailAddress().equals(userEmail)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static String encryptPassword(String password) {
+        BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(COST);
+        return userPassEncoder.encode(password);
     }
 }

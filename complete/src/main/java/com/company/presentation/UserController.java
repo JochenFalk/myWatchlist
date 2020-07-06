@@ -1,46 +1,55 @@
 package com.company.presentation;
 
 import com.company.business.UserBusiness;
-import com.company.data.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 public class UserController {
 
-	@GetMapping("/isRegisteredUser")
-	public String isRegisteredUser(
-			@RequestParam(value = "userName", required = true) String userName,
-			@RequestParam(value = "userPass", required = true) String userPass)
-	{
-		return UserBusiness.isRegisteredUser(userName, userPass);
-	}
+    @GetMapping("/getLoginStatus")
+    public Boolean getLoginStatus(HttpSession session) {
+        return UserBusiness.getLoginStatus(session);
+    }
 
-	@GetMapping("/isVerifiedUser")
-	public Boolean isVerifiedUser(
-			@RequestParam(value = "userName", required = true) String userName,
-			@RequestParam(value = "userPass", required = true) String userPass)
-	{
-		return UserBusiness.isVerifiedUser(userName, userPass);
-	}
+    @GetMapping("/login")
+    public String login(HttpSession session,
+                        @RequestParam(value = "userName", required = true) String userName,
+                        @RequestParam(value = "userPass", required = true) String userPass) {
+        return UserBusiness.login(userName, userPass, session);
+    }
 
-	@GetMapping("/createUser")
-	public String createUser(
-			@RequestParam(value = "userName", required = true) String userName,
-			@RequestParam(value = "userPass", required = true) String userPass,
-			@RequestParam(value = "userEmail", required = true) String userEmail) {
-		return UserBusiness.createUser(userName, userPass, userEmail);
-	}
+    @GetMapping("/logOut")
+    public Boolean logOut(HttpSession session) {
+        return UserBusiness.logOut(session);
+    }
 
-	@GetMapping("/requestLink")
-	public Boolean requestLink(
-			@RequestParam(value = "userEmail", required = true) String userEmail) {
-		return UserBusiness.requestLink(userEmail);
-	}
+    @GetMapping("/deleteAccount")
+    public Boolean deleteAccount(HttpSession session) {
+        return UserBusiness.deleteAccount(session);
+    }
 
-	@GetMapping("/user")
-	public User user(@RequestParam(value = "id", defaultValue = "") String id) {
-		return UserBusiness.getUserById(id);
-	}
+    @GetMapping("/createUser")
+    public String createUser(
+            @RequestParam(value = "userName", required = true) String userName,
+            @RequestParam(value = "userPass", required = true) String userPass,
+            @RequestParam(value = "userEmail", required = true) String userEmail) {
+        return UserBusiness.createUser(userName, userPass, userEmail);
+    }
+
+    @GetMapping("/isVerifiedUser")
+    public Boolean isVerifiedUser(HttpSession session,
+                                  @RequestParam(value = "userName", required = true) String userName,
+                                  @RequestParam(value = "userPass", required = true) String userPass) {
+        return UserBusiness.isVerifiedUser(userName, userPass, session);
+    }
+
+    @GetMapping("/requestLink")
+    public Boolean requestLink(
+            @RequestParam(value = "userEmail", required = true) String userEmail) {
+        return UserBusiness.requestLink(userEmail);
+    }
 }

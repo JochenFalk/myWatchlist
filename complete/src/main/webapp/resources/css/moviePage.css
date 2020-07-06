@@ -1,0 +1,483 @@
+:root {
+    --bannerHeight: 45vw;
+    --bannerMaxHeight: 225px; /* copy in moviePageController.js*/
+    --mainHeight: 225px;
+    --castInfoMinHeight: 290px;
+    --castMinHeight: 145px;
+    --castHeight: 10.5vw;
+    --castMinWidth: 95px;
+    --castWidth: 7.05vw;
+    --slideHeight: 300px;
+    --slideMaxHeight: 245px;
+
+    --slideShowMargin: 5px;
+    --slideShowHeight: 22vw; /*lower value in case off overflow*/
+    --slideShowWidth: 100%;
+    --maxSlideShowHeight: 225px;
+    --newThumbWidth: 14.6vw;
+    --newThumbMaxWidth: calc(0.75 * 195px); /*take from --maxBannerHeight minus (--bannerMargin * borders) */
+    --similarInfoThumbWidth: calc(4 * 14.6vw); /*calculated in .js script*/
+    --similarInfoThumbMaxWidth: calc(4 * 146px); /*calculated in .js script*/
+}
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+*::-webkit-scrollbar {
+    width: 0.4rem;
+}
+
+*::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: cadetblue;
+    outline: 1px solid slategrey;
+    border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+}
+
+body {
+    background-color: black;
+    color: black;
+    text-decoration: none;
+    font-family: "Segoe UI", serif;
+    font-size: 62.5%;
+    text-align: center;
+    justify-items: center;
+    opacity: 0;
+    animation: fadein 1s;
+    animation-fill-mode: forwards;
+}
+
+#content {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(auto-fit, 1fr);
+    grid-template-areas: "navbar navbar navbar navbar navbar navbar navbar navbar" "header header header header header header header header" "aside main main main main main main main" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "similar similar similar similar similar similar similar similar";
+}
+
+.castInfo {
+    display: grid;
+    grid-gap: 10px;
+    grid-area: castInfo;
+    grid-template-columns: 1fr;
+    grid-template-rows: 15px;
+    height: calc(var(--castMinHeight) * 2.061);
+}
+
+.cast-wrapper {
+    display: grid;
+    grid-gap: 10px;
+    overflow: auto;
+    grid-area: cast-wrapper;
+    grid-template-columns: repeat(auto-fill, var(--castMinWidth));
+    grid-template-rows: repeat(auto-fill, var(--castMinHeight));
+    height: calc(var(--castMinHeight) * 2.061);
+}
+
+#content .similar {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: fit-content(100%) auto;
+    grid-template-areas: "nextslide thumbslides thumbslides thumbslides thumbslides thumbslides thumbslides prevslide";
+}
+
+@media screen and (min-width: 1400px) {
+    .cast-wrapper {
+        overflow: hidden;
+        grid-template-columns: repeat(auto-fill, var(--castWidth));
+        grid-template-rows: repeat(auto-fill, var(--castHeight));
+        height: calc(var(--castHeight) * 2.061);
+    }
+
+    .castInfo {
+        height: calc(var(--castHeight) * 2.05);
+    }
+}
+
+#content {
+    margin: 0 auto;
+    width: 100vw;
+    max-width: 1000px;
+}
+
+#content > * {
+    display: grid;
+    grid-gap: 10px;
+}
+
+.nav {
+    display: grid;
+    grid-area: navbar;
+    grid-gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-content: space-around;
+    padding-left: 0.5em;
+    padding-right: 1rem;
+    background-color: dimgray;
+}
+
+.logo a > img {
+    position: relative;
+    top: 5%;
+    width: auto;
+    height: 55px;
+    padding-right: calc(1vw + 5px);
+}
+
+.navButtons {
+    width: min-content;
+    margin-left: 1.5vw;
+    margin-right: 1.5vw;
+    font-family: "Segoe UI Historic", serif;
+    text-transform: uppercase;
+    font-size: 18px;
+}
+
+.navButtons::before {
+    content: "";
+    display: block;
+    height: 4px;
+    width: 0;
+    position: relative;
+    top: 30px;
+    background-color: cadetblue;
+    transition: all ease-in-out 250ms;
+}
+
+.navButtons:hover {
+    color: cadetblue;
+}
+
+.navButtons:hover::before {
+    width: 100%;
+}
+
+.header {
+    grid-area: header;
+    position: relative;
+    display: inline-block;
+    height: var(--bannerHeight);
+    max-height: var(--bannerMaxHeight);
+    overflow: hidden;
+    transition: max-height 1.5s ease-in-out;
+}
+
+.header > img {
+    max-width: 100%;
+    position: relative;
+    top: -10%;
+}
+
+.aside {
+    grid-area: aside;
+    height: var(--mainHeight);
+}
+
+.main {
+    grid-area: main;
+    height: var(--mainHeight);
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: left;
+    overflow-y: auto;
+    background-color: dimgray;
+}
+
+.main div {
+    padding-bottom: 15px;
+}
+
+.castInfo {
+    position: relative;
+    min-width: var(--castMinWidth);
+    max-width: 260px;
+    padding: 15px;
+    text-align: left;
+    overflow-y: hidden;
+    background-color: dimgray;
+}
+
+.castInfo > * {
+    display: block;
+    height: 25px;
+    margin: 0;
+}
+
+.castText-container p {
+    font-size: 14px;
+}
+
+.cast {
+    min-height: var(--castMinHeight);
+    max-height: var(--castHeight);
+    min-width: var(--castMinWidth);
+    max-width: var(--castWidth);
+}
+
+.cast > img {
+    min-height: var(--castMinHeight);
+    max-height: var(--castHeight);
+    min-width: var(--castMinWidth);
+    max-width: var(--castWidth);
+    border: 1px solid black;
+}
+
+.cast > img:hover {
+    border-color: cadetblue;
+}
+
+.castCharacterName, .directorName, .writerName {
+    display: block;
+    position: relative;
+    height: 23px;
+    width: calc(100% - 2px);
+    bottom: 26px;
+    left: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 15px;
+    font-weight: 400;
+    background: rgba(105, 105, 105, 0.25);
+    animation: scroll;
+    transition: all ease-in-out 1500ms;
+}
+
+.poster > img {
+    min-width: 140px;
+    max-width: 100%;
+    height: var(--mainHeight);
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.poster > img:hover {
+    border-color: cadetblue;
+}
+
+.aside {
+    position: relative;
+}
+
+.poster-overlay {
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    opacity: 0;
+    cursor: pointer;
+    filter: invert(58%) sepia(6%) saturate(2162%) hue-rotate(133deg) brightness(97%) contrast(93%);
+}
+
+.poster-overlay:active {
+    filter: invert(41%) sepia(0%) saturate(218%) hue-rotate(219deg) brightness(95%) contrast(81%);
+    transition: .5s ease-in-out;
+}
+
+.similar {
+    grid-area: similar;
+    position: relative;
+}
+
+.similar > * {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: var(--maxSlideShowHeight);
+    color: dimgray;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.nextSlide, .prevSlide {
+    width: 5vw;
+    font-size: 2rem;
+    border: 1px solid black;
+}
+
+.nextSlide {
+    grid-area: nextslide;
+    justify-self: left;
+}
+
+.prevSlide {
+    grid-area: prevslide;
+    justify-self: right;
+}
+
+.thumbSlides {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    grid-area: thumbslides;
+    overflow: hidden;
+}
+
+.thumbSlides div > a > img {
+    object-fit: cover;
+    height: var(--slideShowHeight);
+    max-height: var(--maxSlideShowHeight);
+    border: 1px solid black;
+    margin-left: var(--slideShowMargin);
+    margin-right: var(--slideShowMargin);
+}
+
+.thumbSlides div > a {
+    object-fit: cover;
+    height: var(--slideShowHeight);
+    max-height: var(--maxSlideShowHeight);
+}
+
+.similar .infoThumb {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    color: dimgray;
+    width: var(--similarInfoThumbWidth);
+    max-width: var(--similarInfoThumbMaxWidth);
+    height: var(--slideShowHeight);
+    max-height: var(--maxSlideShowHeight);
+    border: 1px solid black;
+    margin-left: var(--slideShowMargin);
+    margin-right: var(--slideShowMargin);
+}
+
+#similarLabel-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    height: 25px;
+    width: 100%;
+    opacity: 1;
+    overflow: hidden;
+    background: rgba(105, 105, 105, 0.25);
+    -webkit-transition: all ease-in-out 250ms;
+    transition: all ease-in-out 250ms;
+}
+
+.slideShowText {
+    display: block;
+    position: relative;
+    bottom: 3px;
+    left: 0;
+    overflow: hidden;
+    font-size: 20px;
+    font-weight: 400;
+    height: 100%;
+    width: 50%;
+    background-color: transparent;
+    opacity: .9;
+    z-index: 2;
+    color: lightgrey;
+}
+
+.nextSlide:hover,
+.prevSlide:hover,
+.newThumb:hover,
+.infoThumb:hover,
+.thumbSlides div a > img:hover {
+    border-color: cadetblue;
+    color: cadetblue;
+}
+
+.footer {
+    grid-area: footer;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hide {
+    display: none;
+    visibility: hidden;
+}
+
+p {
+    font-size: 15px;
+    margin-top: -5px;
+}
+
+.castName {
+    font-size: 15px;
+    margin-top: -5px;
+}
+
+h1 {
+    text-transform: uppercase;
+    font-size: 18px;
+}
+
+h2 {
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+h3 {
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+h4 {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: cadetblue;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid black;
+    margin-top: 0;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(50px);
+    }
+}

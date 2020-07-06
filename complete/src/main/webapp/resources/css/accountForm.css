@@ -1,0 +1,131 @@
+input::-ms-reveal, input::-ms-clear {
+    display: none;
+}
+
+.accountForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    width: 100vw;
+    height: 120vh;
+    bottom: 0;
+    right: 0;
+    font-size: 62.5%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2;
+    visibility: hidden;
+    /*transition: .64s ease-in-out;*/
+}
+
+.accountForm-Inner {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    bottom: 100vw;
+    right: 100vh;
+    align-items: center;
+    width: 300px;
+    height: 350px;
+    background-color: #222426;
+    transform: rotate(64deg);
+    transition: .64s ease-in-out;
+}
+.showAccountForm {
+    visibility: visible;
+    opacity: 1;
+}
+
+.showAccountForm .accountForm-Inner {
+    bottom: 0;
+    right: 0;
+    transform: rotate(0);
+}
+
+#closeAccountForm {
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 100%;
+    background-color: dimgray;
+    z-index: 4;
+    color: black;
+    line-height: 3rem;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 0.5rem;
+}
+
+#closeAccountForm:hover {
+    background-color: cadetblue;
+    color: black;
+    transition: .5s;
+}
+
+#closeAccountForm:active {
+    background: dimgray;
+    transition: .5s;
+}
+
+.accountFormText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 80%;
+}
+
+.accountFormText h1 {
+    font-family: "Segoe UI", serif;
+    font-size: 21px;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: lightgray;
+}
+
+.formWrapAccountForm > * {
+    display: block;
+    margin: 10px;
+    height: 30px;
+    width: 100%;
+}
+
+.accountFormText .button {
+    font-family: "Segoe UI", serif;
+    font-size: .875rem;
+    font-weight: 600;
+    width: 90%;
+    color: black;
+    border: 0;
+    cursor: pointer;
+    background: dimgray;
+    text-transform: uppercase;
+    text-align: center;
+    caret-color: transparent;
+    outline: none;
+}
+
+.accountFormText .button:hover {
+    background: cadetblue;
+    transition: .5s;
+}
+
+.accountFormText .button:active {
+    background: dimgray;
+    transition: .5s;
+}
+
+.accountFormMessage {
+    position: relative;
+    bottom: 5%;
+    font-size: .8rem;
+    padding: 0 2.5rem 0 2.5rem;
+}
