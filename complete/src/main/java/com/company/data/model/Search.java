@@ -1,5 +1,6 @@
 package com.company.data.model;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,7 +9,9 @@ public class Search {
     private long id;
     private String title;
     private String year;
+    private byte[] poster;
     private int returnValue;
+    private Instant creationDate;
 
     private static ArrayList<Search> searches = new ArrayList<>();
 
@@ -16,16 +19,26 @@ public class Search {
     private ArrayList<Object> cast = new ArrayList<>();
     private ArrayList<Object> crew = new ArrayList<>();
 
-    public Search(String title, String year, int returnValue) {
-        this.title = title;
-        this.year = year;
-        this.returnValue = returnValue;
-    }
-
-    public Search(String title, String year) {
+    public Search(String title, String year, Instant creationDate) {
         this.title = title;
         this.year = year;
         this.returnValue = 0;
+        this.creationDate = creationDate;
+    }
+
+    public Search(long id, String title, String year, int returnValue, Instant creationDate) {
+        this.id = id;
+        this.title = title;
+        this.year = year;
+        this.returnValue = returnValue;
+        this.creationDate = creationDate;
+    }
+
+    public Search(String title, String year, int returnValue, Instant creationDate) {
+        this.title = title;
+        this.year = year;
+        this.returnValue = returnValue;
+        this.creationDate = creationDate;
     }
 
     public long getId() {
@@ -52,12 +65,28 @@ public class Search {
         this.year = year;
     }
 
+    public byte[] getPoster() {
+        return poster;
+    }
+
+    public void setPoster(byte[] poster) {
+        this.poster = poster;
+    }
+
     public int getReturnValue() {
         return returnValue;
     }
 
     public void setReturnValue(int returnValue) {
         this.returnValue = returnValue;
+    }
+
+    public Instant getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Instant creationDate) {
+        this.creationDate = creationDate;
     }
 
     public static ArrayList<Search> getSearches() {

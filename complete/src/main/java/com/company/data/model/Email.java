@@ -19,6 +19,14 @@ public class Email {
         this.body = body;
     }
 
+    public Email(long id, String type, String recipient, String subject, String body) {
+        this.id = id;
+        this.type = type;
+        this.recipient = recipient;
+        this.subject = subject;
+        this.body = body;
+    }
+
     public long getId() {
         return id;
     }

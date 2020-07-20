@@ -42,7 +42,7 @@ public class newUserCreationValidator implements iUserCreationEventListener {
     }
 
     public static Boolean isExistingUserName(String userNameValidated) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         for (User thisUser : users) {
             if (userNameValidated.equals(thisUser.getName())) {
                 return true;
@@ -52,7 +52,7 @@ public class newUserCreationValidator implements iUserCreationEventListener {
     }
 
     public static Boolean isExistingUserEmail(String userEmailValidated) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         for (User thisUser : users) {
             if (userEmailValidated.equals(thisUser.getEmailAddress())) {
                 return true;

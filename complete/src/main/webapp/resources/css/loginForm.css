@@ -104,7 +104,7 @@ input::-ms-reveal, input::-ms-clear {
 .formWrapLoginForm input:-webkit-autofill:focus,
 .formWrapLoginForm input:-webkit-autofill:active {
     caret-color: dimgray;
-    -webkit-text-fill-color: lightgray;
+    -webkit-text-fill-color: dimgray;
     -webkit-box-shadow: 0 0 0 30px #222426 inset !important;
 }
 

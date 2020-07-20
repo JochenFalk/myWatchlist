@@ -9,7 +9,7 @@ const USEREMAIL_REGEX = /^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-
 const MAX_CHARS = 12; // Take value from above regex
 
 let promiseLoginStatus;
-let isLoggedIn;
+let promiseRole;
 
 
 function initLogin() {
@@ -28,14 +28,22 @@ function initLogin() {
         } else {
             $('#login').fadeIn(0);
             $('#account').addClass('hide');
-            // publicListItems = getPublicListItems();
         }
     });
 }
 
 function getLoginStatus() {
-    promiseLoginStatus = new Promise((resolve, reject) => {
+    promiseLoginStatus = new Promise((resolve) => {
         const url = '/getLoginStatus';
+        $.getJSON(url, data => {
+            resolve(data);
+        });
+    });
+}
+
+function getRole() {
+    promiseRole = new Promise((resolve) => {
+        const url = '/getRole';
         $.getJSON(url, data => {
             resolve(data);
         });
@@ -133,6 +141,12 @@ $(function () {
                                 $('#closeLoginForm').trigger("click");
                                 importPublicList();
                             }, shortTimeOut);
+                            getRole();
+                            promiseRole.then(data => {
+                                if (data.role === "Admin") {
+                                    window.location.href = "/adminPage";
+                                }
+                            });
                         } else if (responseJSON == false) {
                             showLoginMessage('Login failed. Please verify your login credentials.', alertFailureColor);
                         } else {
@@ -311,8 +325,9 @@ function importPublicList() {
         $('#closeListForm').fadeIn(0);
         $('#listCreationSubmit').fadeOut(0);
         $('#listImportSubmit').fadeIn(0);
+        showListMessage("You have a list stored as a cookie. You can import it to your account and the cookie will be deleted.", alertSuccessColor);
         document.querySelector('.listTitle').innerHTML = "Import list";
-        document.querySelector('#listCreationName').value = "myWatchlist";
+        document.querySelector('#listCreationName').value = "MyWatchlist";
         $('#listCreationDescription').text("My first watchList");
     } else {
         setTimeout(function () {

@@ -1,6 +1,7 @@
 package com.company.presentation;
 
 import com.company.business.UserBusiness;
+import net.minidev.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,11 @@ public class UserController {
     @GetMapping("/getLoginStatus")
     public Boolean getLoginStatus(HttpSession session) {
         return UserBusiness.getLoginStatus(session);
+    }
+
+    @GetMapping("/getRole")
+    public JSONObject getRole(HttpSession session) {
+        return UserBusiness.getRole(session);
     }
 
     @GetMapping("/login")

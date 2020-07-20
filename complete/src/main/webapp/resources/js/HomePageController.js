@@ -3,8 +3,16 @@ jQuery(function () {
     initHomePage()
 });
 
+window.addEventListener('resize', function () {
+    displayItems = parseInt(style.getPropertyValue('--displayItems'));
+    slideHeight = style.getPropertyValue('--slideHeight');
+    refreshPage();
+}, false);
+
 const slides = null;
-const displayItems = 5;
+const style = window.getComputedStyle(document.documentElement);
+let displayItems = parseInt(style.getPropertyValue('--displayItems'));
+let slideHeight = parseInt(style.getPropertyValue('--slideHeight'));
 
 let thumbsToLoad = 0;
 let popularThumbIndex = 1;
@@ -13,7 +21,7 @@ let popularThumbs = [];
 let topRatedThumbs = [];
 
 function initHomePage() {
-    deleteCookie("moviePush");
+    // deleteCookie("moviePush");
     getSystemList("Popular", "System");
     getSystemList("TopRated", "System");
     $('.loaderPage').fadeIn(FADEIN_TIME);
@@ -25,7 +33,11 @@ function initHomePage() {
             $('#account').removeClass('hide');
             getCurrentList();
             promiseCurrentList.then(data => {
-                privateListItems = data.listItems;
+                if(data != null) {
+                    if (data.listItems != null) {
+                        privateListItems = data.listItems;
+                    }
+                }
             });
         } else {
             $('#login').fadeIn(0);
@@ -66,7 +78,7 @@ function getSystemList(listTitle, userName) {
         for (let i = 0; i < listItems.length; i++) {
             let title = listItems[i].title;
             let year = listItems[i].release_year;
-            retrieveSearch(title, year, "showList", listTitle);
+            retrieveSearch(title, year,0,"showList", listTitle);
         }
         console.log("list retrieved");
     })
@@ -103,15 +115,21 @@ function topRatedNextThumb(thumb) {
 
 function processSearch(search, type, listTitle) {
     // check search identifier for null
-    if (search.returnValue === '-1') {
+    if (search.returnValue === null) {
         alertFailure("No results where found", longTimeOut);
     } else {
         const {poster_url, overview, title, release_year} = search.results;
         if (type === 'searchBox') {
             // update search box
+            let poster = "";
+            if (search.poster !== null) {
+                poster = "data:image/png;base64," + search.poster;
+            } else {
+                poster = poster_url;
+            }
             $('.searchBoxText').fadeOut(FADEOUT_TIME, function () {
                 $('.searchBoxText').display = "none";
-                $('#searchPoster').attr('src', poster_url);
+                $('#searchPoster').attr('src', poster);
                 $('#replyTitle').text(title + " (" + release_year + ")");
                 $('#replyOverview').text(overview);
                 $('.replyText').display = "block";
@@ -139,24 +157,36 @@ function processSearch(search, type, listTitle) {
 
 function addPopularThumb() {
     const {poster_url, id} = search.results;
+    let poster = "";
+    if (search.poster !== null) {
+        poster = "data:image/png;base64," + search.poster;
+    } else {
+        poster = poster_url;
+    }
     let cloneThumb = $('#popular-templateThumb').clone(true, true);
     cloneThumb.removeAttr('id');
-    cloneThumb.attr('name', id);
+    cloneThumb.attr('movieId', id);
     cloneThumb.removeClass('hide');
     cloneThumb.addClass('popularThumb');
-    cloneThumb.find('img').attr('src', poster_url);
+    cloneThumb.find('img').attr('src', poster);
     cloneThumb.insertAfter('#popular-templateThumb');
     thumbsToLoad--;
 }
 
 function addTopRatedThumb() {
     const {poster_url, id} = search.results;
+    let poster = "";
+    if (search.poster !== null) {
+        poster = "data:image/png;base64," + search.poster;
+    } else {
+        poster = poster_url;
+    }
     let cloneThumb = $('#topRated-templateThumb').clone(true, true);
     cloneThumb.removeAttr('id');
-    cloneThumb.attr('name', id);
+    cloneThumb.attr('movieId', id);
     cloneThumb.removeClass('hide');
     cloneThumb.addClass('topRatedThumb');
-    cloneThumb.find('img').attr('src', poster_url);
+    cloneThumb.find('img').attr('src', poster);
     cloneThumb.insertAfter('#topRated-templateThumb');
     thumbsToLoad--;
 }

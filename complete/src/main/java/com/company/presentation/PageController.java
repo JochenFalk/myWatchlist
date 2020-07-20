@@ -3,6 +3,8 @@ package com.company.presentation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class PageController {
 
@@ -26,8 +28,16 @@ public class PageController {
         return "listPage";
     }
 
-    @RequestMapping("/reactTest")
-    public String reactTest() {
-        return "reactTest";
+    @RequestMapping("/adminPage")
+    public String adminPage(HttpSession session) {
+
+        if (session.getAttribute("role") != null) {
+            if (session.getAttribute("role").toString().equals("Admin")) {
+                return "adminPage";
+            } else {
+                return "homePage";
+            }
+        }
+        return null;
     }
 }

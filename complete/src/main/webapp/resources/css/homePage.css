@@ -1,15 +1,16 @@
 :root {
+    --displayItems: 3; /*item is used for calculation in .js script*/
     --bannerMargin: 5px;
-    --bannerHeight: 22vw; /*lower value in case off overflow*/
+    --bannerHeight: 26.3vw; /*lower value in case off overflow*/
     --bannerWidth: 100%;
-    --maxBannerHeight: 225px;
-    --newThumbWidth: 14.6vw;
-    --newThumbMaxWidth: calc(0.75 * 195px); /*take from --maxBannerHeight minus (--bannerMargin * borders) */
-    --popularInfoThumbWidth: calc(4 * 14.6vw); /*calculated in .js script*/
-    --popularInfoThumbMaxWidth: calc(4 * 146px); /*calculated in .js script*/
-    --topRatedInfoThumbWidth: calc(4 * 14.6vw); /*calculated in .js script*/
-    --topRatedInfoThumbMaxWidth: calc(4 * 146px); /*calculated in .js script*/
-    --slideHeight: 0px; /*set in .js script*/
+    --maxBannerHeight: 167px;
+    --newThumbWidth: 17.4vw;
+    --newThumbMaxWidth: calc(0.66 * 167px); /*take from --maxBannerHeight minus (--bannerMargin * borders * amount of slides + 1) */
+    --popularInfoThumbWidth: calc(3 * 17.4vw); /*calculated in .js script*/
+    --popularInfoThumbMaxWidth: calc(3 * 167px); /*calculated in .js script*/
+    --topRatedInfoThumbWidth: calc(3 * 17.4vw); /*calculated in .js script*/
+    --topRatedInfoThumbMaxWidth: calc(3 * 167px); /*calculated in .js script*/
+    --slideHeight: 220; /*item is used for calculation in .js script*/
 }
 
 html {
@@ -51,6 +52,7 @@ body {
     opacity: 0;
     animation: fadein 1s ;
     animation-fill-mode: forwards;
+    overflow-x: hidden;
 }
 
 #content {
@@ -75,7 +77,30 @@ body {
     grid-template-areas: "nextslide thumbslides thumbslides thumbslides thumbslides thumbslides thumbslides prevslide";
 }
 
+#content .footer {
+    display: none;
+}
+
+@media screen and (min-width: 450px) {
+    :root {
+        --displayItems: 4;
+    }
+
+    #content .footer {
+        display: block;
+    }
+}
+
+@media screen and (min-width: 700px) {
+    :root {
+        --displayItems: 5;
+    }
+}
+
 @media screen and (min-width: 900px) {
+    :root {
+        --displayItems: 6;
+    }
 }
 
 #content {
@@ -270,16 +295,19 @@ body {
 
 .main {
     grid-area: main;
-    min-height: 0;
+    min-height: 300px;
+    max-height: 530px;
     padding-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
+    overflow-y: auto;
     background-color: dimgray;
 }
 
 .footer {
     grid-area: footer;
     background-color: dimgray;
+    min-height: 25px;
 }
 
 .center {

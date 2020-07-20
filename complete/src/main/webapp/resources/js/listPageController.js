@@ -3,8 +3,13 @@ jQuery(function () {
     initListPage()
 });
 
-const displayItems = 5;
-const slideHeight = 220; // includes 10px grid border
+window.addEventListener('resize', function () {
+    window.location.href = "/listPage";
+}, false)
+
+const style = window.getComputedStyle(document.documentElement);
+let displayItems = parseInt(style.getPropertyValue('--displayItems'));
+let slideHeight = parseInt(style.getPropertyValue('--slideHeight'));
 
 let thumbIndex = 1;
 let slideIndex = 1;
@@ -13,7 +18,7 @@ let thumbs = [];
 let thumbsToLoad = 0;
 
 function initListPage() {
-    deleteCookie("moviePush");
+    // deleteCookie("moviePush");
     let height = (slideHeight - 10) + "px";
     root.style.setProperty("--slideHeight", height);
     $('.loaderPage').fadeIn(FADEIN_TIME);
@@ -25,14 +30,18 @@ function initListPage() {
             $('#account').removeClass('hide');
             getCurrentList();
             promiseCurrentList.then(data => {
-                privateListItems = data.listItems;
+                if(data != null) {
+                    if (data.listItems != null) {
+                        privateListItems = data.listItems;
+                    }
+                }
             });
         } else {
             $('#login').fadeIn(0);
             $('#account').addClass('hide');
             publicListItems = getPublicListItems();
         }
-    buildMovieList();
+        buildMovieList();
     });
 }
 
@@ -58,34 +67,27 @@ function buildMovieList() {
 
                     $('#myWatchlistLabel-container').find('div').text(listTitle + " : " + description);
 
-                    // let url = "/getListFromUser";
-                    // let parameters = {
-                    //     listTitle: listTitle
-                    // };
-                    //
-                    // $.getJSON(url, parameters, returnStatus);
-                    //
-                    // function returnStatus(data) {
-                        let listItems = data.listItems;
-                        if (listItems.length !== 0) {
-                            thumbsToLoad += listItems.length;
-                            for (let i = 0; i < listItems.length; i++) {
-                                privateListItems.push(listItems[i]);
-                                let title = listItems[i].title;
-                                let year = listItems[i].release_year;
-                                retrieveSearch(title, year, 'update');
-                            }
-                        } else {
-                            $('.loaderPage').fadeOut(FADEOUT_TIME, function () {
-                                alertSuccess("Welcome! Try making your new list", longTimeOut);
-                                removeHidden();
-                            });
+                    let listItems = data.listItems;
+                    if (listItems.length !== 0) {
+                        thumbsToLoad += listItems.length;
+                        for (let i = 0; i < listItems.length; i++) {
+                            privateListItems.push(listItems[i]);
+                            let title = listItems[i].title;
+                            let year = listItems[i].release_year;
+                            retrieveSearch(title, year,0,'update', "");
                         }
+                    } else {
+                        $('.loaderPage').fadeOut(FADEOUT_TIME, function () {
+                            alertSuccess("Welcome! Try making your new list", longTimeOut);
+                            showThumbs(0);
+                            removeHidden();
+                        });
+                    }
                     // }
                 } else {
                     $('.loaderPage').fadeOut(FADEOUT_TIME);
                     removeHidden();
-                    $('#myWatchlistLabel-container').find('div').text("myWatchlist: a simple list to track my movies");
+                    $('#myWatchlistLabel-container').find('div').text("MyWatchlist: My first watchlist");
                     $('#list').trigger("click");
                     showListMessage("You dont seem to have any list. Try creating on :)", alertSuccessColor);
                 }
@@ -107,15 +109,15 @@ function buildMovieList() {
                 for (let i = 0; i < publicListItems.length; i++) {
                     let title = publicListItems[i].title;
                     let year = publicListItems[i].release_year;
-                    retrieveSearch(title, year, 'update');
+                    retrieveSearch(title, year,0,'update', "");
                 }
             }
-            $('#myWatchlistLabel-container').find('div').text("myWatchlist: a simple list to track my movies");
+            $('#myWatchlistLabel-container').find('div').text("MyWatchlist: My first watchlist");
         }
     });
 }
 
-function processSearch(search, type, listTitle) {
+function processSearch(search, type) {
     // check search identifier for null
     if (search.returnValue == '-1') {
         alertFailure("No results where found", longTimeOut);
@@ -123,9 +125,15 @@ function processSearch(search, type, listTitle) {
         const {poster_url, overview, title, release_year} = search.results;
         if (type === 'searchBox') {
             // update search box
+            let poster = "";
+            if (search.poster !== null) {
+                poster = "data:image/png;base64," + search.poster;
+            } else {
+                poster = poster_url;
+            }
             $('.searchBoxText').fadeOut(FADEOUT_TIME, function () {
                 $('.searchBoxText').display = "none";
-                $('#searchPoster').attr('src', poster_url);
+                $('#searchPoster').attr('src', poster);
                 $('#replyTitle').text(title + " (" + release_year + ")");
                 $('#replyOverview').text(overview);
                 $('.replyText').display = "block";
@@ -136,30 +144,42 @@ function processSearch(search, type, listTitle) {
             // executed on list page reload
             addThumb();
             addSlide();
-            updateList();
+            refreshPage();
         }
     }
 }
 
 function addThumb() {
     const {poster_url} = search.results;
+    let poster = "";
+    if (search.poster !== null) {
+        poster = "data:image/png;base64," + search.poster;
+    } else {
+        poster = poster_url;
+    }
     let cloneThumb = $('#templateThumb').clone(true, true);
     cloneThumb.removeAttr('id');
     cloneThumb.removeClass('hide');
     cloneThumb.addClass('thumb');
-    cloneThumb.find('img').attr('src', poster_url);
+    cloneThumb.find('img').attr('src', poster);
     cloneThumb.insertAfter('#templateThumb');
 }
 
 // below "argument type string not assignable to parameter type Jquery" appeared in 2020.1 version of IntelliJ?
 function addSlide() {
     const {vote_average, overview, release_year, poster_url, id, title} = search.results;
+    let poster = "";
+    if (search.poster !== null) {
+        poster = "data:image/png;base64," + search.poster;
+    } else {
+        poster = poster_url;
+    }
     let cloneSlide = $('#templateSlide').clone(true, true);
     cloneSlide.removeAttr('id');
-    cloneSlide.attr('name', id);
+    cloneSlide.attr('movieId', id);
     cloneSlide.removeClass('hide');
     cloneSlide.addClass('slide');
-    cloneSlide.find('.poster').find('img').attr('src', poster_url);
+    cloneSlide.find('.poster').find('img').attr('src', poster);
     let deleteButton = cloneSlide.find('#templateDeleteButton');
     deleteButton.removeAttr('id');
     deleteButton.addClass('deleteButton');
@@ -168,10 +188,11 @@ function addSlide() {
     cloneSlide.find('.rating').text(vote_average);
     cloneSlide.find('.plot').text(overview);
     cloneSlide.insertAfter('#templateSlide');
+    $(cloneSlide).fadeOut(0);
 }
 
-function updateList() {
-    if (thumbsToLoad === 1) {
+function refreshPage() {
+    if (thumbsToLoad <= 1) {
         indexElements();
         showThumbs(1);
         showSlides(1);
@@ -248,9 +269,8 @@ function createEventListenerThumb(thumb) {
 
 // Show and hide thumbs
 function showThumbs(thumb) {
-    let i;
     let visibleThumbs = 0;
-    for (i = 0; i < thumbs.length; i++) {
+    for (let i = 0; i < thumbs.length; i++) {
         let thumbId = thumbs[i].getAttribute("thumbId");
         if (thumbId >= thumb && thumbId < (thumb + displayItems)) {
             thumbs[i].style.display = "grid";
@@ -262,8 +282,13 @@ function showThumbs(thumb) {
     // Set width of info thumb depending of amount of movie thumbs are visible
     let width = getComputedStyle(root).getPropertyValue("--newThumbWidth");
     let maxWidth = getComputedStyle(root).getPropertyValue("--newThumbMaxWidth");
-    root.style.setProperty("--infoThumbWidth", "calc(" + ((displayItems + 1) - visibleThumbs) + " *" + width + ")");
-    root.style.setProperty("--infoThumbMaxWidth", "calc(" + ((displayItems + 1) - visibleThumbs) + " *" + maxWidth + ")");
+    if (visibleThumbs === 0) {
+        root.style.setProperty("--infoThumbWidth", "calc(" + (displayItems - 1) + " *" + width + ")");
+        root.style.setProperty("--infoThumbMaxWidth", "calc(" + (displayItems - 1) + " *" + maxWidth + ")");
+    } else {
+        root.style.setProperty("--infoThumbWidth", "calc(" + ((displayItems + 1) - visibleThumbs) + " *" + width + ")");
+        root.style.setProperty("--infoThumbMaxWidth", "calc(" + ((displayItems + 1) - visibleThumbs) + " *" + maxWidth + ")");
+    }
     showThumbAnimation(thumbs);
 }
 
@@ -274,6 +299,7 @@ function showSlides(slide) {
     let move;
     let nextRow = 1;
     let rows = getRows();
+    let animationDuration = 1000;
     for (i = 0; i < slides.length; i++) {
         let slideId = slides[i].getAttribute("slideId");
         if (slide <= slides.length) {
@@ -287,56 +313,81 @@ function showSlides(slide) {
                 row = nextRow;
                 slides[i].style.gridRow = row;
             }
-            showSlideAnimation(i, move);
+            $(slides[i]).fadeIn(animationDuration);
+            showSlideAnimation(i, move, animationDuration);
         }
     }
 }
 
 function deleteSlide(slide) {
+
+    let i;
+    let deleteThumb = thumbs[slide - 1];
+    let deleteSlide = slides[slide - 1];
+
     getCurrentList();
     promiseCurrentList.then(data => {
-        // promiseLoginStatus.then(data => {
         if (data) {
-            let id = slides[slide - 1].getAttribute('name');
-            for (let i = 0; i < privateListItems.length; i++) {
+            let id = deleteSlide.getAttribute('movieId');
+            for (i = 0; i < privateListItems.length; i++) {
                 if (privateListItems[i].id === id) {
+                    privateListItems = data.listItems;
                     privateListItems.splice(i, 1);
                     let listTitle = data.title;
                     let listItems = JSON.stringify(privateListItems);
                     updatePrivateList(listTitle, listItems);
-                    alertSuccess("Successfully deleted movie from \"" + listTitle + "\"", alertSuccessColor);
+                    alertSuccess("Deleted movie from \"" + listTitle + "\"", shortTimeOut);
                 }
             }
         } else {
-            let id = slides[slide - 1].getAttribute('name');
+            let id = deleteSlide.getAttribute('movieId');
             for (let i = 0; i < publicListItems.length; i++) {
                 if (publicListItems[i].id === id) {
                     publicListItems.splice(i, 1);
                     let listTitle = "movieList";
                     let listItems = publicListItems;
                     updatePublicList(listTitle, listItems);
-                    alertSuccess("Successfully deleted movie", shortTimeOut);
+                    alertSuccess("Deleted movie from MyWatchlist", shortTimeOut);
                 }
             }
         }
-        let deleteThumb = thumbs[slide - 1];
-        let deleteSlide = slides[slide - 1];
-        $(deleteThumb).fadeOut(FADEOUT_TIME, function () {
-            deleteThumb.remove();
-        });
-        $(deleteSlide).fadeOut(FADEOUT_TIME, function () {
-            deleteSlide.remove();
-            updateList();
-        });
+
+        let row;
+        let move;
+        let nextRow = 0;
+        let rows = getRows();
+        let animationDuration = 1000;
+        for (i = 0; i < slides.length; i++) {
+            if (slide <= slides.length) {
+                if (slides[i] === deleteSlide) {
+                    move = rows[i] - (slides.length);
+                    row = slides.length;
+                    slides[i].style.gridRow = row;
+                    $(slides[i]).css('z-index', -1);
+                    $(slides[i]).fadeOut(animationDuration, function () {
+                        deleteThumb.remove();
+                        deleteSlide.remove();
+                        refreshPage();
+                    });
+                    $(deleteThumb).fadeOut(animationDuration);
+                } else {
+                    nextRow++;
+                    move = rows[i] - nextRow;
+                    row = nextRow;
+                    slides[i].style.gridRow = row;
+                }
+                removeSlideAnimation(i, move, animationDuration);
+            }
+        }
     });
 }
 
 // Thumbnail controls
 function currentThumb(thumb) {
-    if (thumb !== slideIndex) {
-        slideIndex = thumb;
-        showSlides(slideIndex);
-    }
+    // if (thumb !== slideIndex) {
+    slideIndex = thumb;
+    showSlides(slideIndex);
+    // }
 }
 
 // slideshow controls
@@ -353,9 +404,8 @@ function nextThumb(thumb) {
 }
 
 function removeHidden() {
-    let i;
     let hidden = document.getElementsByClassName("un-hide");
-    for (i = 0; i < hidden.length; i++) {
+    for (let i = 0; i < hidden.length; i++) {
         hidden[i].classList.remove("hide");
     }
 }

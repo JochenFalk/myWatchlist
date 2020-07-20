@@ -8,6 +8,7 @@ import java.util.Base64;
 public class User {
 
     private long id;
+    private String role;
     private String name;
     private String password;
     private String emailAddress;
@@ -50,8 +51,9 @@ public class User {
         this.tokenExpiryDate = getTokenExpiryDate();
     }
 
-    public User(long id, String name, String password, String emailAddress, Boolean isValidated, Boolean isRegistered, int validationAttempts, String token, Instant tokenExpiryDate) {
+    public User(long id, String role, String name, String password, String emailAddress, Boolean isValidated, Boolean isRegistered, int validationAttempts, String token, Instant tokenExpiryDate) {
         this.id = id;
+        this.role = role;
         this.name = name;
         this.password = password;
         this.emailAddress = emailAddress;
@@ -68,6 +70,14 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getName() {
@@ -153,6 +163,7 @@ public class User {
                 "Password: " + password + "; " +
                 "Email: " + emailAddress + "; " +
                 "Validated: " + getValidated() + "; " +
+                "Registered: " + getRegistered() + "; " +
                 "Validation attempts: " + getValidationAttempts() + "; " +
                 "Token: " + getToken() + "; " +
                 "Token expiry date: " + getTokenExpiryDate();

@@ -184,6 +184,7 @@
             <form class="formWrapAccountForm" novalidate>
                 <input id="accountFormSubmit" class="button" value="Log out"/>
                 <input id="accountFormDelete" class="button" value="Delete account"/>
+                <input id="adminPageButton" class="button" value="Access admin page"/>
             </form>
             <img id="closeAccountForm" src="../../resources/images/close-150x150.png" alt="">
         </div>
@@ -213,7 +214,7 @@
                             <div class="arrow"></div>
                         </div>
                         <div class="custom-options">
-                            <span class="custom-option selected" data-value="Select a list">Select a list</span>
+                            <span id="default-option" class="custom-option selected" data-value="Select a list">Select a list</span>
                             <span id="templateOption" class="hide custom-option" data-value=""></span>
                         </div>
                     </div>

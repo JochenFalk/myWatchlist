@@ -79,17 +79,28 @@ public class EmailBusiness {
             message.setContent(email.getBody(), "text/html");
             Transport.send(message);
 
-            updateEmails(email, user);
+            insertEmails(email, user);
 
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
 
-    private static void updateEmails(Email email, User user) {
-//        ArrayList<Email> emails = Email.getEmails();
-//        emails.add(email);
-//        Email.setEmails(emails);
-        PostgreSystemQueries.insertEmail(email, user);
+    private static void insertEmails(Email email, User user) {
+        String userName = user.getName();
+        long userId = 0;
+        User newUser = PostgreSystemQueries.getUserByName(userName);
+        if (newUser != null) {
+            userId = newUser.getId();
+            // known issue: replace dirty while loop with interface callback
+            while (userId == 0) {
+                User checkUser = PostgreSystemQueries.getUserByName(userName);
+                if (checkUser != null) {
+                    newUser.setId(checkUser.getId());
+                    userId = checkUser.getId();
+                }
+            }
+        }
+        PostgreSystemQueries.insertEmail(email, newUser);
     }
 }

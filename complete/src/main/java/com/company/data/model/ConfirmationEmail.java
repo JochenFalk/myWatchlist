@@ -2,7 +2,7 @@ package com.company.data.model;
 
 public class ConfirmationEmail extends Email{
 
-    private String type = "Confirmation";
+    private String type;
 
     public ConfirmationEmail(long id, String recipient, String subject, String body) {
         super(id, recipient, subject, body);

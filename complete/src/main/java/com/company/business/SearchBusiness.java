@@ -2,6 +2,7 @@ package com.company.business;
 
 import com.company.data.PostgreSystemQueries;
 import com.company.data.model.Search;
+import com.company.data.model.User;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -13,7 +14,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,19 +33,21 @@ public class SearchBusiness {
     private static final String APPEND_VIDEO_URL = "?enablejsapi=1&amp;version=3&amp;playerapiid=ytplayer&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;rel=0&amp;loop=1";
 
     private static final int MAX_CAST = 12;
+    private static final int EXPIRY_TIME = (60 * 60 * 24) * 7; // 1 week
 
-    public static Search newSearch(String title, String year, int returnValue) {
-        return search(title, year, returnValue);
+    public static Search newSearch(String title, String year, int returnValue, HttpSession session) {
+        return search(title, year, returnValue, session);
     }
 
-    public static Search newSearch(String title, String year) {
-        int returnValue = 0;
-        return search(title, year, returnValue);
-    }
+//    public static Search newSearch(String title, String year, HttpSession session) {
+//        int returnValue = 0;
+//        return search(title, year, returnValue, session);
+//    }
 
-    public static Search search(String title, String year, int returnValue) {
+    public static Search search(String title, String year, int returnValue, HttpSession session) {
 
-        Search search = new Search(title, year, returnValue);
+        Instant now = Instant.now();
+        Search search = new Search(title, year, returnValue, now);
 
         String noSpacesTitle = title.replaceAll("\\s+", "%20");
         String titleSearchURL = "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY + "&language=en-US&query=" + noSpacesTitle + "&page=1&include_adult=false&year=" + year;
@@ -71,8 +76,8 @@ public class SearchBusiness {
                 if (array.size() != 0 && (array.size() > returnValue)) {
 
                     JSONObject result = (JSONObject) array.get(returnValue); // create JObject with result
-                    processSearch(search, result);
-                    getExtendedSearch(search);
+                    processSearch(search, result, session);
+                    getExtendedSearch(search, session);
 
                     return search;
                 }
@@ -81,13 +86,10 @@ public class SearchBusiness {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // set identifier for null
-        search.setReturnValue(-1);
-        return search;
+        return null;
     }
 
-    public static void getExtendedSearch(Search search) {
+    public static void getExtendedSearch(Search search, HttpSession session) {
 
         String id = search.getResults().get("id");
         String idSearchURL = "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + API_KEY + "&append_to_response=credits,videos";
@@ -116,8 +118,7 @@ public class SearchBusiness {
                 JSONArray cast = (JSONArray) credits.get("cast"); // get array "cast"
                 JSONArray crew = (JSONArray) credits.get("crew"); // get array "crew"
 
-                processExtendedSearch(search, cast, crew, videos);
-
+                processExtendedSearch(search, cast, crew, videos, session);
             }
 
         } catch (IOException e) {
@@ -125,20 +126,7 @@ public class SearchBusiness {
         }
     }
 
-    public static Search retrieveSearch(String title, String year) {
-        ArrayList<Search> searches = Search.getSearches();
-        for (Search thisSearch : searches) {
-            boolean found =
-                    title.equals(thisSearch.getTitle()) &&
-                            year.equals(thisSearch.getYear());
-            if (found) {
-                return thisSearch;
-            }
-        }
-        return null;
-    }
-
-    private static void processSearch(Search search, JSONObject result) {
+    private static void processSearch(Search search, JSONObject result, HttpSession session) {
 
         HashMap<String, String> resultMap = new HashMap<>();
 
@@ -174,12 +162,10 @@ public class SearchBusiness {
                 resultMap.put(keyString.toString(), keyValue.toString());
             }
         }
-
         search.setResults(resultMap);
-        PostgreSystemQueries.insertSearch(search);
     }
 
-    private static void processExtendedSearch(Search search, JSONArray cast, JSONArray crew, JSONObject videos) {
+    private static void processExtendedSearch(Search search, JSONArray cast, JSONArray crew, JSONObject videos, HttpSession session) {
 
         ArrayList<Object> newCast = new ArrayList<>();
         ArrayList<Object> newCrew = new ArrayList<>();
@@ -210,7 +196,6 @@ public class SearchBusiness {
             castMap.put("profile_url", profilePathUrl);
 
             newCast.add(castMap);
-
         }
 
         for (Object thisObject : crew) {
@@ -265,11 +250,72 @@ public class SearchBusiness {
                 search.setResults(resultMap);
             }
         }
-
         search.setCast(newCast);
         search.setCrew(newCrew);
-//        Search.addSearches(search);
-        PostgreSystemQueries.updateSearch(search);
+    }
+
+    public static Search retrieveSearch(String title, String year) {
+        Search search = PostgreSystemQueries.getSearch(title, year);
+        if (search != null) {
+            Instant creationDate = search.getCreationDate();
+            Instant expiryDate = creationDate.plusSeconds(EXPIRY_TIME);
+            if (expiryDate.isBefore(Instant.now())) {
+                // delete the search so next call it will be recreated
+                // and return search stored in object.
+                PostgreSystemQueries.deleteSearchById(search.getId());
+            }
+            return search;
+        }
+        return null;
+    }
+
+    public static void saveSearch(String searchString, HttpSession session) throws IOException {
+        if (session.getAttribute("username") != null) {
+            String userName = session.getAttribute("username").toString();
+            User user = PostgreSystemQueries.getUserByName(userName);
+            if (user != null) {
+
+                JSONObject searchObject = (JSONObject) JSONValue.parse(searchString);
+
+                String title = searchObject.get("title").toString();
+                String year = searchObject.get("year").toString();
+                int returnValue = Integer.parseInt(searchObject.get("returnValue").toString());
+                Instant creationDate = Instant.parse(searchObject.get("creationDate").toString());
+
+                Search existingSearch = PostgreSystemQueries.getSearch(title, year);
+                if (existingSearch == null) {
+
+                    Search search = new Search(title, year, returnValue, creationDate);
+
+                    JSONObject results = (JSONObject) searchObject.get("results");
+                    HashMap<String, String> resultMap = new HashMap<>();
+                    for (Object keyString : results.keySet()) {
+                        Object keyValue = results.get(keyString);
+                        if (results.get(keyString) != null) {
+                            resultMap.put(keyString.toString(), keyValue.toString());
+                        }
+                    }
+
+                    JSONArray cast = (JSONArray) searchObject.get("cast");
+                    ArrayList<Object> newCast = new ArrayList<>();
+                    newCast.addAll(cast);
+
+                    JSONArray crew = (JSONArray) searchObject.get("crew");
+                    ArrayList<Object> newCrew = new ArrayList<>();
+                    newCrew.addAll(crew);
+
+                    String inputUrl = results.get("poster_url").toString();
+                    byte[] poster = ImageConverter.convertToThumb(inputUrl);
+
+                    search.setResults(resultMap);
+                    search.setCast(newCast);
+                    search.setCrew(newCrew);
+                    search.setPoster(poster);
+
+                    PostgreSystemQueries.insertSearch(search, user);
+                }
+            }
+        }
     }
 
     public static float clamp(float val, float min, float max) {

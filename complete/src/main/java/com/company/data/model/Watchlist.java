@@ -53,7 +53,7 @@ public class Watchlist {
         this.description = description;
     }
 
-    public ArrayList getListItems() {
+    public ArrayList<Object> getListItems() {
         return listItems;
     }
 
