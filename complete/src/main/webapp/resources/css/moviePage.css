@@ -2,22 +2,21 @@
     --bannerHeight: 45vw;
     --bannerMaxHeight: 225px; /* copy in moviePageController.js*/
     --mainHeight: 225px;
-    --castInfoMinHeight: 290px;
-    --castMinHeight: 145px;
+    --castInfoMinHeight: 275px;
+    --castMinHeight: 69px;
     --castHeight: 10.5vw;
-    --castMinWidth: 95px;
+    --castMinWidth: 46px;
     --castWidth: 7.05vw;
-    --slideHeight: 300px;
-    --slideMaxHeight: 245px;
 
+    --displayItems: 3; /*item is used for calculation in .js script*/
     --slideShowMargin: 5px;
-    --slideShowHeight: 22vw; /*lower value in case off overflow*/
+    --slideShowHeight: 26.3vw; /*lower value in case off overflow*/
     --slideShowWidth: 100%;
-    --maxSlideShowHeight: 225px;
-    --newThumbWidth: 14.6vw;
-    --newThumbMaxWidth: calc(0.75 * 195px); /*take from --maxBannerHeight minus (--bannerMargin * borders) */
-    --similarInfoThumbWidth: calc(4 * 14.6vw); /*calculated in .js script*/
-    --similarInfoThumbMaxWidth: calc(4 * 146px); /*calculated in .js script*/
+    --maxSlideShowHeight: 167px;
+    --newThumbWidth: 17.4vw;
+    --newThumbMaxWidth: calc(0.66 * 167px); /*take from --maxBannerHeight minus (--bannerMargin * borders) */
+    --similarInfoThumbWidth: calc(3 * 17.4vw); /*calculated in .js script*/
+    --similarInfoThumbMaxWidth: calc(3 * 167px); /*calculated in .js script*/
 }
 
 html {
@@ -66,7 +65,7 @@ body {
     grid-gap: 10px;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(auto-fit, 1fr);
-    grid-template-areas: "navbar navbar navbar navbar navbar navbar navbar navbar" "header header header header header header header header" "aside main main main main main main main" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "similar similar similar similar similar similar similar similar";
+    grid-template-areas: "navbar navbar navbar navbar navbar navbar navbar navbar" "header header header header header header header header" "aside main main main main main main main" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "similar-banner similar-banner similar-banner similar-banner similar-banner similar-banner similar-banner similar-banner" "similar similar similar similar similar similar similar similar";
 }
 
 .castInfo {
@@ -75,17 +74,17 @@ body {
     grid-area: castInfo;
     grid-template-columns: 1fr;
     grid-template-rows: 15px;
-    height: calc(var(--castMinHeight) * 2.061);
+    height: 306px;
 }
 
 .cast-wrapper {
     display: grid;
     grid-gap: 10px;
-    overflow: auto;
+    overflow: hidden;
     grid-area: cast-wrapper;
     grid-template-columns: repeat(auto-fill, var(--castMinWidth));
     grid-template-rows: repeat(auto-fill, var(--castMinHeight));
-    height: calc(var(--castMinHeight) * 2.061);
+    height: 306px;
 }
 
 #content .similar {
@@ -95,16 +94,63 @@ body {
     grid-template-areas: "nextslide thumbslides thumbslides thumbslides thumbslides thumbslides thumbslides prevslide";
 }
 
-@media screen and (min-width: 1400px) {
-    .cast-wrapper {
-        overflow: hidden;
-        grid-template-columns: repeat(auto-fill, var(--castWidth));
-        grid-template-rows: repeat(auto-fill, var(--castHeight));
-        height: calc(var(--castHeight) * 2.061);
+.cast {
+    min-height: var(--castMinHeight);
+    max-height: var(--castHeight);
+    min-width: var(--castMinWidth);
+    max-width: var(--castWidth);
+}
+
+.cast > img {
+    min-height: var(--castMinHeight);
+    max-height: var(--castHeight);
+    min-width: var(--castMinWidth);
+    max-width: var(--castWidth);
+    border: 1px solid black;
+}
+
+@media screen and (min-width: 425px) {
+    :root {
+        --displayItems: 4;
+        --castMinHeight: 148px;
+        --castMinWidth: 95px;
     }
 
-    .castInfo {
-        height: calc(var(--castHeight) * 2.05);
+    .cast-wrapper {
+        overflow: auto;
+    }
+}
+
+@media screen and (min-width: 700px) {
+    :root {
+        --displayItems: 5;
+    }
+}
+
+@media screen and (min-width: 880px) {
+    :root {
+        --displayItems: 6;
+    }
+
+    .cast-wrapper {
+        overflow: hidden;
+    }
+}
+
+@media screen and (min-width: 1400px) {
+
+    :root {
+        --displayItems: 5;
+        --mainHeight: 375px;
+        --maxSlideShowHeight: 225px;
+    }
+
+    .cast > img {
+        max-height: 148px;
+    }
+
+    #content {
+        grid-template-areas: "navbar navbar navbar navbar navbar navbar navbar navbar" "header header header header header header header header" "aside aside main main main main main main" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "castInfo castInfo cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper cast-wrapper" "similar-banner similar-banner similar-banner similar-banner similar-banner similar-banner similar-banner similar-banner" "similar similar similar similar similar similar similar similar";
     }
 }
 
@@ -185,6 +231,7 @@ body {
 
 .aside {
     grid-area: aside;
+    position: relative;
     height: var(--mainHeight);
 }
 
@@ -204,8 +251,9 @@ body {
 
 .castInfo {
     position: relative;
-    min-width: var(--castMinWidth);
+    min-width: 95px;
     max-width: 260px;
+    /*width: 225px;*/
     padding: 15px;
     text-align: left;
     overflow-y: hidden;
@@ -220,21 +268,6 @@ body {
 
 .castText-container p {
     font-size: 14px;
-}
-
-.cast {
-    min-height: var(--castMinHeight);
-    max-height: var(--castHeight);
-    min-width: var(--castMinWidth);
-    max-width: var(--castWidth);
-}
-
-.cast > img {
-    min-height: var(--castMinHeight);
-    max-height: var(--castHeight);
-    min-width: var(--castMinWidth);
-    max-width: var(--castWidth);
-    border: 1px solid black;
 }
 
 .cast > img:hover {
@@ -269,10 +302,6 @@ body {
     border-color: cadetblue;
 }
 
-.aside {
-    position: relative;
-}
-
 .poster-overlay {
     display: flex;
     justify-self: center;
@@ -288,6 +317,20 @@ body {
 .poster-overlay:active {
     filter: invert(41%) sepia(0%) saturate(218%) hue-rotate(219deg) brightness(95%) contrast(81%);
     transition: .5s ease-in-out;
+}
+
+.similar-banner {
+    grid-area: similar-banner;
+    position: relative;
+    background-color: dimgray;
+    height: 25px;
+}
+
+.similar-banner-text {
+    position: absolute;
+    align-self: center;
+    justify-self: center;
+    font-size: 14px;
 }
 
 .similar {
@@ -399,10 +442,6 @@ body {
 .thumbSlides div a > img:hover {
     border-color: cadetblue;
     color: cadetblue;
-}
-
-.footer {
-    grid-area: footer;
 }
 
 .center {

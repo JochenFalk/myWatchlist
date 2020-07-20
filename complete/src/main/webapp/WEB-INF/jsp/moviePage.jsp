@@ -159,6 +159,9 @@
             <div class="castCharacterName"></div>
         </a>
     </div>
+    <div class="similar-banner">
+        <h3 class="similar-banner-text">Browse similar movies</h3>
+    </div>
     <similar class="similar">
         <div onclick="similarNextThumb(1)" class="prevSlide">
             <span>&#10095;</span>
@@ -175,9 +178,9 @@
         <div onclick="similarNextThumb(-1)" class="nextSlide">
             <span>&#10094;</span>
         </div>
-        <div id="similarLabel-container">
-            <div class="slideShowText scroll-left">Browse similar movies</div>
-        </div>
+<%--        <div id="similarLabel-container">--%>
+<%--            <div class="slideShowText scroll-left">Browse similar movies</div>--%>
+<%--        </div>--%>
     </similar>
 </div>
 <!--Hidden search box-->
@@ -272,6 +275,7 @@
             <form class="formWrapAccountForm" novalidate>
                 <input id="accountFormSubmit" class="button" value="Log out"/>
                 <input id="accountFormDelete" class="button" value="Delete account"/>
+                <input id="adminPageButton" class="button" value="Access admin page"/>
             </form>
             <img id="closeAccountForm" src="../../resources/images/close-150x150.png" alt="">
         </div>

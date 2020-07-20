@@ -3,15 +3,20 @@ jQuery(function () {
     initMoviePage()
 });
 
+window.addEventListener('resize', function () {
+    displayItems = parseInt(style.getPropertyValue('--displayItems'));
+    slideHeight = style.getPropertyValue('--slideHeight');
+    refreshPage();
+}, false);
+
 const slides = null;
-const displayItems = 5;
-const slideHeight = 220; // includes 10px grid border
+const style = window.getComputedStyle(document.documentElement);
+let displayItems = parseInt(style.getPropertyValue('--displayItems'));
+let slideHeight = parseInt(style.getPropertyValue('--slideHeight'));
 
 let similarThumbIndex = 1;
 let similarThumbs = [];
 let thumbsToLoad = 0;
-// let pushedMovie;
-// let currentMovie;
 
 function initMoviePage() {
     $('.loaderPage').fadeIn(FADEIN_TIME);
@@ -48,7 +53,11 @@ function initMoviePage() {
             $('#account').removeClass('hide');
             getCurrentList();
             promiseCurrentList.then(data => {
-                privateListItems = data.listItems;
+                if(data != null) {
+                    if (data.listItems != null) {
+                        privateListItems = data.listItems;
+                    }
+                }
             });
         } else {
             $('#login').fadeIn(0);
@@ -65,12 +74,11 @@ function buildMoviePage(pushedMovie) {
         if (data) {
             getPushedMovieFromDatabase();
             promisePushedMovie.then(data => {
-                console.log(data);
                 if (data) {
                     if (data !== null && data.length !== 0) {
                         let title = data[0].title;
                         let year = data[0].release_year;
-                        retrieveSearch(title, year, "build");
+                        retrieveSearch(title, year,0,"build", "");
                     } else {
                         $('.loaderPage').fadeOut(FADEOUT_TIME, function () {
                             alertFailure("Oeps! There wa a problem loading the page. Please refresh and try again", longTimeOut);
@@ -92,7 +100,7 @@ function buildMoviePage(pushedMovie) {
             } else {
                 let title = pushedMovie[0].title;
                 let year = pushedMovie[0].release_year;
-                retrieveSearch(title, year, "build");
+                retrieveSearch(title, year,0,"build", "");
             }
         }
     });
@@ -103,9 +111,16 @@ function loadMoviePage(search) {
     const {crew: crew, cast: cast, results} = search;
     const {vote_average, overview, title, id, release_year, poster_url, backdrop_url, video_url} = results;
 
+    let poster = "";
+    if (search.poster !== null) {
+        poster = "data:image/png;base64," + search.poster;
+    } else {
+        poster = poster_url;
+    }
+
     $('#banner').attr('src', backdrop_url);
     $('#youtube_player').attr('src', video_url);
-    $('.aside .poster').find('img').attr('src', poster_url);
+    $('.aside .poster').find('img').attr('src', poster);
     $('.title').text(title + " (" + release_year + ")");
     $('.rating').text(vote_average);
     $('.plot').text(overview);
@@ -119,6 +134,13 @@ function loadMoviePage(search) {
     let dCount = 0;
     let wCount = 0;
 
+    for (let i = 0; i < cast.length; i++) {
+        const {profile_url, name, character} = cast[i];
+        castPosters[i].setAttribute('src', profile_url);
+        castPosters[i].parentElement.classList.remove("hide");
+        $(castNames[i]).text(name);
+        $(castCharacterNames[i]).text(name + " as " + character);
+    }
     for (let i = 0; i < crew.length; i++) {
         const {job, name} = crew[i];
         if (job == 'Director') {
@@ -133,13 +155,7 @@ function loadMoviePage(search) {
             wCount++;
         }
     }
-    for (let i = 0; i < cast.length; i++) {
-        const {profile_url, name, character} = cast[i];
-        castPosters[i].setAttribute('src', profile_url);
-        castPosters[i].parentElement.classList.remove("hide");
-        $(castNames[i]).text(name);
-        $(castCharacterNames[i]).text(name + " as " + character);
-    }
+
     if (dCount !== 2) {
         $('.crewDirector').siblings('span').text("");
     }
@@ -210,7 +226,7 @@ function getSimilar(movieId) {
             for (let i = 0; i < listItems.length; i++) {
                 let title = listItems[i].title;
                 let year = listItems[i].release_year;
-                retrieveSearch(title, year, "showList", "Similar")
+                retrieveSearch(title, year,0,"showList", "Similar")
             }
             console.log("list created");
         } else {
@@ -235,15 +251,21 @@ function similarNextThumb(thumb) {
 }
 
 function processSearch(search, type, listTitle) {
-    if (search.returnValue === '-1') {
+    if (search.returnValue === null) {
         alertFailure("No results where found", longTimeOut);
     } else {
         const {poster_url, overview, title, release_year} = search.results;
+        let poster = "";
+        if (search.poster !== null) {
+            poster = "data:image/png;base64," + search.poster;
+        } else {
+            poster = poster_url;
+        }
         if (type === 'searchBox') {
             // update search box
             $('.searchBoxText').fadeOut(FADEOUT_TIME, function () {
                 $('.searchBoxText').display = "none";
-                $('#searchPoster').attr('src', poster_url);
+                $('#searchPoster').attr('src', poster);
                 $('#replyTitle').text(title + " (" + release_year + ")");
                 $('#replyOverview').text(overview);
                 $('.replyText').display = "block";
@@ -270,12 +292,18 @@ function processSearch(search, type, listTitle) {
 
 function addSimilarThumb() {
     const {poster_url, id} = search.results;
+    let poster = "";
+    if (search.poster !== null) {
+        poster = "data:image/png;base64," + search.poster;
+    } else {
+        poster = poster_url;
+    }
     let cloneThumb = $('#similar-templateThumb').clone(true, true);
     cloneThumb.removeAttr('id');
-    cloneThumb.attr('name', id);
+    cloneThumb.attr('movieId', id);
     cloneThumb.removeClass('hide');
     cloneThumb.addClass('similarThumb');
-    cloneThumb.find('img').attr('src', poster_url);
+    cloneThumb.find('img').attr('src', poster);
     cloneThumb.insertAfter('#similar-templateThumb');
 }
 

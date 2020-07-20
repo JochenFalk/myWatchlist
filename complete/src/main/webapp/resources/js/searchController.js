@@ -5,7 +5,6 @@ jQuery(function () {
 
 const DEFAULT_POSTER_URL = "../../resources/images/default-poster-332x500-noborders.png";
 const NO_END_DATE = new Date(9999, 1);
-// const pushMovie = "moviePush";
 
 let search;
 let searchObject = 0;
@@ -54,7 +53,7 @@ $(function () {
             alertSuccess("Fetching movie info", shortTimeOut);
             let title = document.querySelector('#searchBoxTitle').value;
             let year = document.querySelector('#searchBoxYear').value;
-            callSearch(title, year,"searchBox");
+            callSearch(title, year, searchObject, "searchBox");
         } else {
             alertFailure("Movie title is required for a search", longTimeOut);
         }
@@ -69,7 +68,7 @@ $(function () {
             alertSuccess("Fetching movie info", shortTimeOut);
             let title = document.querySelector('#searchBoxTitle').value;
             let year = document.querySelector('#searchBoxYear').value;
-            callNextSearch(title, year, searchObject, 'searchBox');
+            callSearch(title, year, searchObject,'searchBox');
         } else {
             alertFailure("Movie title is required for a search", longTimeOut);
         }
@@ -91,7 +90,7 @@ function resetSearchBox() {
     })
 }
 
-function retrieveSearch(searchTitle, searchYear, type, listTitle) {
+function retrieveSearch(searchTitle, searchYear, searchObject, processType, listTitle) {
     let url = "/retrieveSearch";
     let parameters = {
         searchTitle: searchTitle,
@@ -99,37 +98,21 @@ function retrieveSearch(searchTitle, searchYear, type, listTitle) {
     };
 
     $.getJSON(url, parameters, function(data) {
-        if (type === "build") {
+        console.log("retrieved search");
+        if (processType === "build") {
             loadMoviePage(data);
-        } else if (type === "update" || type === "showList") {
+        } else if (processType === "update" || processType === "showList" || processType === "searchBox") {
             search = data;
-            processSearch(data, type, listTitle);
+            processSearch(data, processType, listTitle);
         }
     })
         .fail(function () {
-            callSearch(searchTitle, searchYear, type, listTitle);
+            console.log("called new search");
+            callSearch(searchTitle, searchYear, searchObject, processType, listTitle);
         })
 }
 
-function callSearch(searchTitle, searchYear, type, listTitle) {
-    let url;
-    let parameters;
-    url = "/newSearch";
-    parameters = {
-        searchTitle: searchTitle,
-        searchYear: searchYear
-    };
-
-    $.getJSON(url, parameters, searchReturn);
-
-    function searchReturn(data) {
-        search = data;
-        console.log(data);
-        processSearch(data, type, listTitle);
-    }
-}
-
-function callNextSearch(searchTitle, searchYear, searchObject, type) {
+function callSearch(searchTitle, searchYear, searchObject, processType, listTitle) {
     let url;
     let parameters;
     url = "/nextSearch";
@@ -143,6 +126,19 @@ function callNextSearch(searchTitle, searchYear, searchObject, type) {
 
     function searchReturn(data) {
         search = data;
-        processSearch(data, type);
+        processSearch(data, processType, listTitle);
+        // if (processType !== "searchBox") {
+            saveLastPerformedSearch();
+        // }
     }
+}
+
+function saveLastPerformedSearch() {
+    let parameters;
+    let url = "/saveSearch";
+    parameters = {
+        searchObject: JSON.stringify(search)
+    };
+
+    $.getJSON(url, parameters);
 }

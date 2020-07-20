@@ -1,9 +1,11 @@
-document.addEventListener("readystatechange", () => {
-    if (document.readyState == "complete") initAccount();
+history.navigationMode = 'compatible';
+jQuery(function () {
+    initAccount();
 });
 
 function initAccount() {
     $('.loaderAccountBox').fadeOut(0);
+    $('#adminPageButton').fadeOut(0);
 }
 
 function showAccountMessage(msg, color) {
@@ -21,6 +23,12 @@ $(function () {
     $('#account').on('click', function () {
         hideAccountMessage();
         $('.accountForm').addClass('showAccountForm');
+        getRole();
+        promiseRole.then(data => {
+            if (data.role === "Admin") {
+                $('#adminPageButton').fadeIn(0);
+            }
+        });
     })
 });
 
@@ -89,5 +97,11 @@ $(function () {
                 }
             }, shortTimeOut);
         }
+    })
+});
+
+$(function () {
+    $('#adminPageButton').on('click', function () {
+        window.location.href = "/adminPage";
     })
 });

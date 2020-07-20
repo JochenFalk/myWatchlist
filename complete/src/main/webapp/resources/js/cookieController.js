@@ -77,7 +77,7 @@ function setPushedMovieInDatabase(pushedMovie) {
 
 function pushListMoviePage(slide) {
     let pushList = [];
-    let movieId = slides[slide - 1].getAttribute('name');
+    let movieId = slides[slide - 1].getAttribute('movieId');
     getLoginStatus();
     promiseLoginStatus.then(data => {
         if (data) {
@@ -112,7 +112,7 @@ function pushListMoviePage(slide) {
 
 function pushPopularMoviePage(thumb) {
     let pushList = [];
-    let movieId = popularThumbs[thumb - 1].getAttribute('name');
+    let movieId = popularThumbs[thumb - 1].getAttribute('movieId');
     getLoginStatus();
     promiseLoginStatus.then(data => {
         if (data) {
@@ -147,7 +147,7 @@ function pushPopularMoviePage(thumb) {
 
 function pushTopRatedMoviePage(thumb) {
     let pushList = [];
-    let movieId = topRatedThumbs[thumb - 1].getAttribute('name');
+    let movieId = topRatedThumbs[thumb - 1].getAttribute('movieId');
     getLoginStatus();
     promiseLoginStatus.then(data => {
         if (data) {
@@ -182,7 +182,7 @@ function pushTopRatedMoviePage(thumb) {
 
 function pushSimilarMoviePage(thumb) {
     let pushList = [];
-    let movieId = similarThumbs[thumb - 1].getAttribute('name');
+    let movieId = similarThumbs[thumb - 1].getAttribute('movieId');
     getLoginStatus();
     promiseLoginStatus.then(data => {
         if (data) {

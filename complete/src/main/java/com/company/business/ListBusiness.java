@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class WatchlistBusiness {
+public class ListBusiness {
 
     private static final String API_KEY = "1c0a5b80ba526a387cb22c7d79fbeb03";
-    private static final int EXPIRY_TIME = 60 * 60;
+    private static final int EXPIRY_TIME = 60 * 60; // 1 hour
     private static final int MAX_LIST = 10;
     private static final int MAX_PAGE_NUMBER = 5;
 
@@ -35,7 +35,7 @@ public class WatchlistBusiness {
 
     public static Watchlist createSystemList(String title, ArrayList<Object> listItems) {
         Instant now = Instant.now();
-        return new Watchlist(title, now.toString(), listItems);
+        return new Watchlist(title, now.toString(), listItems); //set instant as description as temporary workaround for missing field in DB
     }
 
     public static void renameList(String title, User user) {
@@ -100,7 +100,7 @@ public class WatchlistBusiness {
                     i++;
                 }
 
-                return WatchlistBusiness.createSystemList("Popular", newListItems);
+                return ListBusiness.createSystemList("Popular", newListItems);
             }
 
         } catch (IOException e) {
@@ -162,7 +162,7 @@ public class WatchlistBusiness {
                     i++;
                 }
 
-                return WatchlistBusiness.createSystemList("TopRated", newListItems);
+                return ListBusiness.createSystemList("TopRated", newListItems);
             }
 
         } catch (IOException e) {
@@ -225,7 +225,7 @@ public class WatchlistBusiness {
                     i++;
                 }
 
-                return WatchlistBusiness.createSystemList("Similar", newListItems);
+                return ListBusiness.createSystemList("Similar", newListItems);
             }
 
         } catch (IOException e) {
@@ -236,7 +236,7 @@ public class WatchlistBusiness {
     }
 
     public static Watchlist getSystemList(String listTitle, String userName) {
-        Watchlist watchlist = PostgreSystemQueries.getList(listTitle, userName);
+        Watchlist watchlist = PostgreSystemQueries.getListByTitleAndUser(listTitle, userName);
         User system = UserBusiness.getUserById("1");
         if (watchlist != null) {
             Instant dateCreated = Instant.parse(watchlist.getDescription());
@@ -280,40 +280,10 @@ public class WatchlistBusiness {
         return null;
     }
 
-    public static Boolean addMovieToList (String objectList, String objectMovie, HttpSession session) {
-        if (session.getAttribute("username") != null) {
-            String userName = session.getAttribute("username").toString();
-
-            JSONObject list = (JSONObject) JSONValue.parse(objectList);
-            JSONObject movie = (JSONObject) JSONValue.parse(objectMovie);
-
-            Watchlist watchlist = PostgreSystemQueries.getList(list.get("title").toString(), userName);
-
-            if (watchlist != null) {
-
-                HashMap<String, String> resultMap = new HashMap<>();
-
-                JSONObject object = (JSONObject) movie.get("results");
-
-                resultMap.put("title", movie.get("title").toString());
-                resultMap.put("release_year", movie.get("release_year").toString());
-                resultMap.put("id", object.get("id").toString());
-
-                ArrayList<Object> listItems = watchlist.getListItems();
-                listItems.add(new JSONObject(resultMap));
-                watchlist.setListItems(listItems);
-                PostgreSystemQueries.updateList(watchlist);
-
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static Watchlist getListFromUser(String listTitle, HttpSession session) {
         if (session.getAttribute("username") != null) {
             String userName = session.getAttribute("username").toString();
-            Watchlist watchlist = PostgreSystemQueries.getList(listTitle, userName);
+            Watchlist watchlist = PostgreSystemQueries.getListByTitleAndUser(listTitle, userName);
             if (watchlist != null) {
                 return watchlist;
             }
@@ -338,7 +308,7 @@ public class WatchlistBusiness {
 
     public static Boolean setPushedMovie(String pushedMovie, HttpSession session) {
         if (session.getAttribute("username") != null) {
-            session.setAttribute("pushedMovie", pushedMovie);
+            session.setAttribute("pushedmovie", pushedMovie);
             return true;
         }
         return false;
@@ -346,13 +316,14 @@ public class WatchlistBusiness {
 
     public static String getPushedMovie(HttpSession session) {
         if (session.getAttribute("username") != null) {
-            return session.getAttribute("pushedMovie").toString();
+            return session.getAttribute("pushedmovie").toString();
         }
         return null;
     }
 
     public static Boolean setCurrentList(String listTitle, HttpSession session) {
         if (session.getAttribute("username") != null) {
+            session.setAttribute("currentlist", listTitle);
             return true;
         }
         return false;
@@ -361,32 +332,45 @@ public class WatchlistBusiness {
     public static Watchlist getCurrentList(HttpSession session) {
         if (session.getAttribute("username") != null) {
             String userName = session.getAttribute("username").toString();
-            if (session.getAttribute("currentList") != null) {
-                String currentList = session.getAttribute("currentList").toString();
-                return PostgreSystemQueries.getList(currentList, userName);
+            if (session.getAttribute("currentlist") != null) {
+                String currentList = session.getAttribute("currentlist").toString();
+                return PostgreSystemQueries.getListByTitleAndUser(currentList, userName);
             } else {
                 ArrayList<Watchlist> arrayList = getAllListsFromUser(session);
+                Watchlist watchlist;
                 if (arrayList != null && arrayList.size() != 0) {
-                    Watchlist watchlist = arrayList.get(0);
+                    watchlist = arrayList.get(0);
                     setCurrentList(watchlist.getTitle(), session);
-                    return watchlist;
+                } else {
+                    watchlist = new Watchlist("MyWatchlist", "My first watchList");
+                    User user = PostgreSystemQueries.getUserByName(userName);
+                    PostgreSystemQueries.insertList(watchlist, user);
                 }
+                return watchlist;
             }
         }
         return null;
     }
 
-    public static Boolean createList(String listTitle, String listDesc, HttpSession session) {
+    public static String createList(String listTitle, String listDesc, HttpSession session) {
         if (session.getAttribute("username") != null) {
             String userName = session.getAttribute("username").toString();
-            Watchlist watchlist = new Watchlist(listTitle, listDesc);
             User user = PostgreSystemQueries.getUserByName(userName);
             if (user != null) {
-                PostgreSystemQueries.insertList(watchlist, user);
-                return true;
+                Watchlist watchlist = PostgreSystemQueries.getListByTitleAndUser(listTitle, userName);
+                System.out.println(watchlist);
+                if (watchlist == null) {
+                    Watchlist newWatchlist = new Watchlist(listTitle, listDesc);
+                    PostgreSystemQueries.insertList(newWatchlist, user);
+                    return "true";
+                } else {
+                    JSONObject msg = new JSONObject();
+                    msg.put("msg", "A list with title \"" + listTitle + "\" already exists. Please choose another title.");
+                    return msg.toString();
+                }
             }
         }
-        return false;
+        return"false";
     }
 
     public static Boolean createListWithItems(String listTitle, String listDesc, String listItems, HttpSession session) {
@@ -413,7 +397,7 @@ public class WatchlistBusiness {
             ArrayList<Object> arrayList = convertToArraylist(array);
 
             String userName = session.getAttribute("username").toString();
-            Watchlist watchlist = PostgreSystemQueries.getList(listTitle, userName);
+            Watchlist watchlist = PostgreSystemQueries.getListByTitleAndUser(listTitle, userName);
             if (watchlist != null) {
                 watchlist.setListItems(arrayList);
                 PostgreSystemQueries.updateList(watchlist);
@@ -426,11 +410,14 @@ public class WatchlistBusiness {
     }
 
     public static Boolean deleteListFromUser(String title, HttpSession session) {
-        String userName = session.getAttribute("username").toString();
-        Watchlist watchlist = PostgreSystemQueries.getList(title, userName);
-        if (watchlist != null) {
-            PostgreSystemQueries.deleteList(watchlist);
-            return true;
+        if (session.getAttribute("username") != null) {
+            String userName = session.getAttribute("username").toString();
+            Watchlist watchlist = PostgreSystemQueries.getListByTitleAndUser(title, userName);
+            if (watchlist != null) {
+                PostgreSystemQueries.deleteList(watchlist);
+                session.removeAttribute("currentlist");
+                return true;
+            }
         }
         return false;
     }

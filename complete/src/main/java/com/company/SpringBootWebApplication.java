@@ -14,20 +14,22 @@ import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHtt
 public class SpringBootWebApplication extends SpringBootServletInitializer {
 
     private static final String systemHash = ApplicationConfig.getSystemHash();
+    private static final String adminHash = ApplicationConfig.getAdminHash();
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(SpringBootWebApplication.class);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         SpringApplication.run(SpringBootWebApplication.class, args);
-        User user = PostgreSystemQueries.getUserByName("System");
+        User system = PostgreSystemQueries.getUserByName("System");
+        User admin = PostgreSystemQueries.getUserByName("Admin1");
 
-        if (user == null) {
+        if (system == null) {
 
-            User systemUser = new User(
+            User user = new User(
                     "System",
                     systemHash,
                     "no-reply@mywatchlist.com",
@@ -35,12 +37,30 @@ public class SpringBootWebApplication extends SpringBootServletInitializer {
                     true,
                     0);
 
-            int createdUsers = PostgreSystemQueries.insertUser(systemUser);
+            int createdUsers = PostgreSystemQueries.insertAdmin(user);
             if (createdUsers == 1) {
                 System.out.println("System user created");
             }
         } else {
             System.out.println("System user found");
+        }
+
+        if (admin == null) {
+
+            User user = new User(
+                    "Admin1",
+                    adminHash,
+                    "admin@mywatchlist.com",
+                    true,
+                    true,
+                    0);
+
+            int createdUsers = PostgreSystemQueries.insertAdmin(user);
+            if (createdUsers == 1) {
+                System.out.println("Admin user created");
+            }
+        } else {
+            System.out.println("Admin user found");
         }
     }
 }

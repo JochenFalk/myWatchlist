@@ -28,16 +28,21 @@ function searchResultAnimation() {
 }
 
 function showThumbAnimation(thumbs) {
-    // Get values for animation
-    let thumb = Array.prototype.slice.call(thumbs);
-    // Set animation parameters
+    let visibleThumbs = [];
+    for (let i = 0; i < thumbs.length; i++) {
+        let style = window.getComputedStyle(thumbs[i]);
+        let display = style.getPropertyValue('display');
+        if (display === "grid") {
+            visibleThumbs.push(thumbs[i]);
+        }
+    }
+    let thumb = Array.prototype.slice.call(visibleThumbs);
     let timings = {
         easing: "ease-in-out",
         iterations: 1,
         direction: "normal",
         fill: "both",
     };
-    // Perform animation
     thumb.forEach(function (element, i) {
         timings.delay = i * 75;
         timings.duration = 800;
@@ -55,32 +60,36 @@ function showThumbAnimation(thumbs) {
     });
 }
 
-function showSlideAnimation(i, move) {
-    let slide = slides[i];
-    slide.keyframes = [{
-        transform: "translateY(" + move * slideHeight + "px)"
-    }, {
-        transform: "translateY(0)"
-    }];
+function showSlideAnimation(i, move, animationDuration) {
+    if (!isNaN(move)) {
+        let slide = slides[i];
+        slide.keyframes = [{
+            transform: "translateY(" + move * slideHeight + "px)"
+        }, {
+            transform: "translateY(0)"
+        }];
 
-    slide.animProps = {
-        duration: 1000,
-        easing: "ease-in-out",
-        iterations: 1
-    };
-    let animation = slide.animate(slide.keyframes, slide.animProps);
+        slide.animProps = {
+            duration: animationDuration,
+            easing: "ease-in-out",
+            iterations: 1
+        };
+        // known error caused on resizing of screen due to unknown issue with slideHeight variable?
+        //     update: suspect issue is caused by calling animation when "move" == 0
+        let animation = slide.animate(slide.keyframes, slide.animProps);
+    }
 }
 
-function removeSlideAnimation(i, move) {
+function removeSlideAnimation(i, move, animationDuration) {
     let slide = slides[i];
     slide.keyframes = [{
-        transform: "translateY(0)"
-    }, {
         transform: "translateY(" + move * slideHeight + "px)"
+    }, {
+        transform: "translateY(0)"
     }];
 
     slide.animProps = {
-        duration: 1000,
+        duration: animationDuration,
         easing: "ease-in-out",
         iterations: 1
     };

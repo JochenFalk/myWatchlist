@@ -191,6 +191,7 @@
             <form class="formWrapAccountForm" novalidate>
                 <input id="accountFormSubmit" class="button" value="Log out"/>
                 <input id="accountFormDelete" class="button" value="Delete account"/>
+                <input id="adminPageButton" class="button" value="Access admin page"/>
             </form>
             <img id="closeAccountForm" src="../../resources/images/close-150x150.png" alt="">
         </div>

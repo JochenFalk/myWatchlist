@@ -27,6 +27,24 @@ public class UserBusiness {
         return false;
     }
 
+    public static JSONObject getRole(HttpSession session) {
+        if (session.getAttribute("username") != null && session.getAttribute("role") != null) {
+            String userName = session.getAttribute("username").toString();
+            String userRole = session.getAttribute("role").toString();
+            User user = PostgreSystemQueries.getUserByName(userName);
+            if (user != null) {
+                if (user.getRole().equals(userRole)) {
+                    JSONObject role = new JSONObject();
+                    role.put("role", userRole);
+                    return role;
+                }
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
+
     public static Boolean logOut(HttpSession session) {
         if (session.getAttribute("username") != null) {
             String userName = session.getAttribute("username").toString();
@@ -47,9 +65,9 @@ public class UserBusiness {
             String userName = session.getAttribute("username").toString();
             User user = PostgreSystemQueries.getUserByName(userName);
             if (user != null) {
+                System.out.println("Account deleted: " + session.getAttribute("username"));
                 session.invalidate();
                 PostgreSystemQueries.deleteUserById(user.getId());
-                System.out.println("Account deleted: " + session.getAttribute("username"));
                 return true;
             } else {
                 return false;
@@ -69,14 +87,14 @@ public class UserBusiness {
         if (validationMessage.equals("true")) {
             String userPassCrypted = encryptPassword(userPass);
             User user = new User(userName, userPassCrypted, userEmail);
-            EmailBusiness.sendConfirmationEmail(user);
             PostgreSystemQueries.insertUser(user);
+            EmailBusiness.sendConfirmationEmail(user);
         }
         return validationMessage;
     }
 
     public static Boolean verifyRegistration(String token) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         Instant now = Instant.now();
         for (User thisUser : users) {
             boolean verified =
@@ -103,7 +121,7 @@ public class UserBusiness {
     }
 
     public static User getUserById(String id) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         int parsedId = Integer.parseInt(id);
         for (User thisUser : users) {
             if (thisUser.getId() == parsedId) {
@@ -114,7 +132,7 @@ public class UserBusiness {
     }
 
     public static User getUserByEmail(String emailAddress) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         for (User thisUser : users) {
             if (thisUser.getEmailAddress().equals(emailAddress)) {
                 return thisUser;
@@ -124,7 +142,7 @@ public class UserBusiness {
     }
 
     public static Boolean isVerifiedUser(String userName, String userPass, HttpSession session) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(COST);
         for (User thisUser : users) {
             boolean exists =
@@ -135,6 +153,7 @@ public class UserBusiness {
                 thisUser.setRegistered(true);
                 PostgreSystemQueries.updateUser(thisUser);
                 session.setAttribute("username", thisUser.getName());
+                session.setAttribute("role", thisUser.getRole());
                 session.setMaxInactiveInterval(SESSION_TIME);
                 System.out.println("Login by: " + session.getAttribute("username"));
                 return true;
@@ -144,7 +163,7 @@ public class UserBusiness {
     }
 
     public static String login(String userName, String userPass, HttpSession session) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         BCryptPasswordEncoder userPassEncoder = new BCryptPasswordEncoder(COST);
         for (User thisUser : users) {
             boolean exists =
@@ -162,6 +181,7 @@ public class UserBusiness {
                     boolean registered = thisUser.getValidated() && thisUser.getRegistered();
                     if (registered) {
                         session.setAttribute("username", thisUser.getName());
+                        session.setAttribute("role", thisUser.getRole());
                         session.setMaxInactiveInterval(SESSION_TIME);
                         System.out.println("Login by: " + session.getAttribute("username"));
                         return "true";
@@ -173,7 +193,7 @@ public class UserBusiness {
     }
 
     public static Boolean login(String userEmail) {
-        ArrayList<User> users = PostgreSystemQueries.getUsers();
+        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
         for (User thisUser : users) {
             if (thisUser.getEmailAddress().equals(userEmail)) {
                 return true;

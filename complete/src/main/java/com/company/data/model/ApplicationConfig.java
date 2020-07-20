@@ -12,7 +12,8 @@ public class ApplicationConfig {
     private String host;
     private int port;
 
-    private static final String systemHash = "$2a$16$1ZGiIJmasE9wW50nDQi3J.UDUgRjsnoRZZEP6eSNiZABghiI//w4G";
+    private static final String systemHash = "$2a$16$6NLk9MuDUDXqhrYIKurjUO49ScOVgz/zf74iPfzrAtoaD.oXR5k32";
+    private static final String adminHash = "$2a$16$CMxiai7ls/GoyKGxZWdxxe/Lk6RuraDAkOL2PMJCu5XIRN9xIzuam";
 
 //    @Autowired
     public ApplicationConfig() {
@@ -43,5 +44,9 @@ public class ApplicationConfig {
 
     public static String getSystemHash() {
         return systemHash;
+    }
+
+    public static String getAdminHash() {
+        return adminHash;
     }
 }
