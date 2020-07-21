@@ -31,7 +31,6 @@ function retrieveSearch(searchTitle, searchYear, searchObject, processType, list
     };
 
     $.getJSON(url, parameters, function (data) {
-        console.log("retrieved search");
         if (processType === "build") {
             loadMoviePage(data);
         } else if (processType === "update" || processType === "showList" || processType === "searchBox") {
@@ -40,7 +39,6 @@ function retrieveSearch(searchTitle, searchYear, searchObject, processType, list
         }
     })
         .fail(function () {
-            console.log("called new search");
             callSearch(searchTitle, searchYear, searchObject, processType, listTitle);
         })
 }

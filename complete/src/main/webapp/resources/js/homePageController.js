@@ -61,7 +61,6 @@ function getSystemList(listTitle, userName) {
             let year = listItems[i].release_year;
             retrieveSearch(title, year,0,"showList", listTitle);
         }
-        console.log("list retrieved");
     })
         .fail(function () {
             alertFailure("Oeps! An unknown error occurred retrieving the page content :(", longTimeOut)

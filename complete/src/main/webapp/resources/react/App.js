@@ -224,7 +224,10 @@ class Dropdown extends React.Component {
                     })
                 }
             } else {
-                console.log("You are logged out!")
+                alertFailure("You are logged out and will be redirected to the homepage.", longTimeOut);
+                setTimeout(function () {
+                    window.location.href = "/homePage";
+                }, shortTimeOut);
             }
             isUpdated = true;
         });

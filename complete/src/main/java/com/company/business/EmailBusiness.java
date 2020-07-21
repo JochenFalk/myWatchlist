@@ -2,7 +2,10 @@ package com.company.business;
 
 import com.company.data.EmailQueries;
 import com.company.data.UserQueries;
-import com.company.data.model.*;
+import com.company.data.model.ApplicationConfig;
+import com.company.data.model.Email;
+import com.company.data.model.EmailConfig;
+import com.company.data.model.User;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;

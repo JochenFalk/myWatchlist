@@ -234,7 +234,14 @@ $(function () {
         hideListMessage();
         addCustomOptions();
         setOpeningStatusMessage();
+        $('.listFormReplyText').fadeOut(0);
+        $('.listFormText').fadeIn(0);
+        $('#listCreationSubmit').fadeIn(0);
+        $('#listImportSubmit').fadeOut(0);
         $('.listForm').addClass('showListForm');
+        document.querySelector('.listTitle').innerHTML = "List creation";
+        document.querySelector('#listCreationName').value = "";
+        $('#listCreationDescription').text("");
     })
 });
 

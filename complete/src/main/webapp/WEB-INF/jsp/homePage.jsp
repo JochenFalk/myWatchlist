@@ -16,7 +16,7 @@
     <link href="<c:url value="/resources/css/loadingAnimation.css" />" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="<c:url value="/resources/js/HomePageController.js" />"></script>
+    <script src="<c:url value="/resources/js/homePageController.js" />"></script>
     <script src="<c:url value="/resources/js/searchController.js" />"></script>
     <script src="<c:url value="/resources/js/loginController.js" />"></script>
     <script src="<c:url value="/resources/js/accountController.js" />"></script>

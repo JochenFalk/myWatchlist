@@ -198,7 +198,6 @@ function getSimilar(movieId) {
                 let year = listItems[i].release_year;
                 retrieveSearch(title, year, 0, "showList", "Similar")
             }
-            console.log("list created");
         } else {
             $('.loaderPage').fadeOut(FADEOUT_TIME, function () {
                 $('.similar').fadeOut(0);

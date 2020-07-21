@@ -141,7 +141,6 @@
                 <img src="../../resources/images/questionmark-150x150.png" alt="">
                 <span class="tooltipText">
                     <span>Length: 6 to 12 characters</span><br>
-<!--                    <span>Only alphanumerical characters</span><br>-->
                     <span>Must contain 1 letter</span><br>
                     <span>No consecutive "." or "_"</span><br>
                     <span>No "." followed by "_" or visa versa</span><br>

@@ -207,7 +207,6 @@ function pushSimilarMoviePage(thumb) {
                         'id': systemListItems[i].id
                     };
                     pushList.push(newPush);
-                    console.log(newPush);
                     setSessionCookie("moviePush", pushList);
                     window.location.href = "/moviePage";
                 }
