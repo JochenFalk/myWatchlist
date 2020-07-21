@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class RegistrationEmailController {
 
     @GetMapping("/verifyRegistration")
-    public String verifyRegistration(@RequestParam(value = "token", required = true) String token) {
+    public String verifyRegistration(@RequestParam(value = "token") String token) {
         Boolean isVerified = UserBusiness.verifyRegistration(token);
         if (isVerified) {
             return "accountVerificationSuccess";

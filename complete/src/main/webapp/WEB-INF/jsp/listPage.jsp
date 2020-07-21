@@ -3,9 +3,10 @@
 <html lang="en">
 <head>
     <meta charset=utf-8>
-    <meta name=description content="Create watchlist of your favourite movies">
-    <meta name=keywords content="movies, favourite, watch, watchlist, create">
+    <meta name=description content="Create a watchlist of your favourite movies">
+    <meta name=keywords content="movies, favourite, watch, watchlist, create, browse, list, free, account">
     <title>MyWatchlist - My watchlist</title>
+    <link href="<c:url value="/resources/css/commonStyles.css" />" rel="stylesheet"> <%--keep at the top so other style sheets can override it--%>
     <link href="<c:url value="/resources/css/listPage.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/searchBox.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/loginForm.css" />" rel="stylesheet">
@@ -28,13 +29,13 @@
 <div id="content" class="hide un-hide">
     <nav class="nav">
         <div class="logo">
-            <a href="listPage"><img src="../../resources/images/logo.png" height="40" width="30" alt="Home"/></a>
+            <a href="listPage"><img src="../../resources/images/logo.png" alt="Home"/></a>
         </div>
         <div class="navButtons"><a href="homePage">Home</a></div>
-        <div id="list" class="navButtons"><a href="javascript:void(null);">lists</a></div>
-        <div id="Search" class="navButtons"><a href="javascript:void(null);">Search</a></div>
-        <div id="login" class="navButtons"><a href="javascript:void(null);">Login</a></div>
-        <div id="account" class="hide navButtons"><a href="javascript:void(null);">account</a></div>
+        <div id="list" class="navButtons"><a href="javascript:null;">lists</a></div>
+        <div id="Search" class="navButtons"><a href="javascript:null;">Search</a></div>
+        <div id="login" class="navButtons"><a href="javascript:null;">Login</a></div>
+        <div id="account" class="hide navButtons"><a href="javascript:null;">account</a></div>
     </nav>
     <!--    movie poster slideshow-->
     <header class="header">
@@ -64,17 +65,17 @@
         <div id="templateSlide" class="hide">
             <aside class="aside">
                 <div>
-                    <a class="poster" href="javascript:void(null);"><img
+                    <a class="poster" href="javascript:null;"><img
                             src="../../resources/images/default-poster-332x500-noborders.png" alt=""/></a>
                 </div>
             </aside>
             <section class="section">
+                <img id="templateDeleteButton" src="../../resources/images/close-150x150.png" alt="">
                 <div>
                     <h2>
-                        <a class="title" href="javascript:void(null);">Title could not be found!</a>
+                        <a class="title" href="javascript:null;">Title could not be found!</a>
                         <img src="../../resources/images/yellow_star.png" height="15" width="15" alt=""/>
                         <span class="rating">0</span>
-                        <img id="templateDeleteButton" src="../../resources/images/close-150x150.png" alt="">
                     </h2>
                     <h2>Plot</h2>
                     <p class="plot">
@@ -84,12 +85,6 @@
             </section>
         </div>
     </main>
-    <footer class="footer hide">
-        <p style="margin: auto;"> Please send us an <a
-                href="mailto:jochenfalk@gmail.com?subject=Movie request">email</a> if you
-            would like to see a particular movie added to this watchlist.
-        </p>
-    </footer>
 </div>
 </body>
 <!--Hidden search box-->

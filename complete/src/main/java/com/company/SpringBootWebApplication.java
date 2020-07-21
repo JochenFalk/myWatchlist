@@ -1,6 +1,6 @@
 package com.company;
 
-import com.company.data.PostgreSystemQueries;
+import com.company.data.UserQueries;
 import com.company.data.model.ApplicationConfig;
 import com.company.data.model.User;
 import org.springframework.boot.SpringApplication;
@@ -24,8 +24,8 @@ public class SpringBootWebApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
 
         SpringApplication.run(SpringBootWebApplication.class, args);
-        User system = PostgreSystemQueries.getUserByName("System");
-        User admin = PostgreSystemQueries.getUserByName("Admin1");
+        User system = UserQueries.getUserByName("System");
+        User admin = UserQueries.getUserByName("Admin1");
 
         if (system == null) {
 
@@ -37,7 +37,7 @@ public class SpringBootWebApplication extends SpringBootServletInitializer {
                     true,
                     0);
 
-            int createdUsers = PostgreSystemQueries.insertAdmin(user);
+            int createdUsers = UserQueries.insertAdmin(user);
             if (createdUsers == 1) {
                 System.out.println("System user created");
             }
@@ -55,7 +55,7 @@ public class SpringBootWebApplication extends SpringBootServletInitializer {
                     true,
                     0);
 
-            int createdUsers = PostgreSystemQueries.insertAdmin(user);
+            int createdUsers = UserQueries.insertAdmin(user);
             if (createdUsers == 1) {
                 System.out.println("Admin user created");
             }

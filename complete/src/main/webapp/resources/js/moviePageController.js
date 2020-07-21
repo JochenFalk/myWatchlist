@@ -53,7 +53,7 @@ function initMoviePage() {
             $('#account').removeClass('hide');
             getCurrentList();
             promiseCurrentList.then(data => {
-                if(data != null) {
+                if (data != null) {
                     if (data.listItems != null) {
                         privateListItems = data.listItems;
                     }
@@ -62,9 +62,9 @@ function initMoviePage() {
         } else {
             $('#login').fadeIn(0);
             $('#account').addClass('hide');
-            publicListItems = getPublicListItems();
         }
         buildMoviePage(getPushedMovieFromCookie());
+        publicListItems = getPublicListItems();
     });
 }
 
@@ -75,10 +75,10 @@ function buildMoviePage(pushedMovie) {
             getPushedMovieFromDatabase();
             promisePushedMovie.then(data => {
                 if (data) {
-                    if (data !== null && data.length !== 0) {
+                    if (data.length !== 0) {
                         let title = data[0].title;
                         let year = data[0].release_year;
-                        retrieveSearch(title, year,0,"build", "");
+                        retrieveSearch(title, year, 0, "build", "");
                     } else {
                         $('.loaderPage').fadeOut(FADEOUT_TIME, function () {
                             alertFailure("Oeps! There wa a problem loading the page. Please refresh and try again", longTimeOut);
@@ -100,7 +100,7 @@ function buildMoviePage(pushedMovie) {
             } else {
                 let title = pushedMovie[0].title;
                 let year = pushedMovie[0].release_year;
-                retrieveSearch(title, year,0,"build", "");
+                retrieveSearch(title, year, 0, "build", "");
             }
         }
     });
@@ -111,7 +111,7 @@ function loadMoviePage(search) {
     const {crew: crew, cast: cast, results} = search;
     const {vote_average, overview, title, id, release_year, poster_url, backdrop_url, video_url} = results;
 
-    let poster = "";
+    let poster;
     if (search.poster !== null) {
         poster = "data:image/png;base64," + search.poster;
     } else {
@@ -143,14 +143,14 @@ function loadMoviePage(search) {
     }
     for (let i = 0; i < crew.length; i++) {
         const {job, name} = crew[i];
-        if (job == 'Director') {
+        if (job === "Director") {
             $(crewDirectors[dCount]).text(name);
             dCount++;
         }
     }
     for (let i = 0; i < crew.length; i++) {
         const {job, name} = crew[i];
-        if (job == 'Writer') {
+        if (job === "Writer") {
             $(crewWriters[wCount]).text(name);
             wCount++;
         }
@@ -180,36 +180,6 @@ function removeHidden() {
     }
 }
 
-$(function () {
-    let poster = $('.poster');
-    let overlay = $('.poster-overlay');
-    poster.on("mouseover", function () {
-        overlay.css('opacity', 1);
-        poster.find('img').css('border','1px solid cadetblue');
-    })
-    poster.on("mouseleave", function () {
-        overlay.css('opacity', 0);
-        poster.find('img').css('border','1px solid black');
-    })
-    overlay.on("mouseover", function () {
-        overlay.css('opacity', 1);
-        poster.find('img').css('border','1px solid cadetblue');
-    })
-    overlay.on("mouseleave", function () {
-        overlay.css('opacity', 0);
-        poster.find('img').css('border','1px solid black');
-    })
-});
-
-$(function () {
-    $('.similar').on("mouseover", function () {
-        $('#similarLabel-container').css('opacity', 0);
-    })
-    $('.similar').on("mouseleave", function () {
-        $('#similarLabel-container').css('opacity', 1);
-    })
-});
-
 function getSimilar(movieId) {
     let url;
     url = "/getSimilar";
@@ -217,16 +187,16 @@ function getSimilar(movieId) {
         movieId: movieId
     };
 
-    $.getJSON(url, parameters, searchStatus);
+    $.getJSON(url, parameters, callback);
 
-    function searchStatus(data) {
+    function callback(data) {
         let {listItems} = data;
         thumbsToLoad += listItems.length;
         if (listItems.length !== 0) {
             for (let i = 0; i < listItems.length; i++) {
                 let title = listItems[i].title;
                 let year = listItems[i].release_year;
-                retrieveSearch(title, year,0,"showList", "Similar")
+                retrieveSearch(title, year, 0, "showList", "Similar")
             }
             console.log("list created");
         } else {
@@ -251,6 +221,7 @@ function similarNextThumb(thumb) {
 }
 
 function processSearch(search, type, listTitle) {
+    let text = $('.replyText');
     if (search.returnValue === null) {
         alertFailure("No results where found", longTimeOut);
     } else {
@@ -262,14 +233,13 @@ function processSearch(search, type, listTitle) {
             poster = poster_url;
         }
         if (type === 'searchBox') {
-            // update search box
             $('.searchBoxText').fadeOut(FADEOUT_TIME, function () {
                 $('.searchBoxText').display = "none";
                 $('#searchPoster').attr('src', poster);
                 $('#replyTitle').text(title + " (" + release_year + ")");
                 $('#replyOverview').text(overview);
-                $('.replyText').display = "block";
-                $('.replyText').fadeIn(FADEIN_TIME);
+                text.display = "block";
+                text.fadeIn(FADEIN_TIME);
                 searchResultAnimation();
             });
         } else if (type === "showList") {
@@ -292,7 +262,7 @@ function processSearch(search, type, listTitle) {
 
 function addSimilarThumb() {
     const {poster_url, id} = search.results;
-    let poster = "";
+    let poster;
     if (search.poster !== null) {
         poster = "data:image/png;base64," + search.poster;
     } else {
@@ -320,12 +290,9 @@ function refreshPage() {
 }
 
 function indexElements() {
-    // find elements
-    let i;
     let sThumb = 0;
     similarThumbs = document.getElementsByClassName('similarThumb');
-    // set element id used by thumb slideshow and create event listeners
-    for (i = 0; i < similarThumbs.length; i++) {
+    for (let i = 0; i < similarThumbs.length; i++) {
         sThumb++;
         similarThumbs[i].setAttribute('thumbId', sThumb + '');
         let id = similarThumbs[i].getAttribute('id');
@@ -342,7 +309,6 @@ function createEventListenerSimilarThumb(i, thumb) {
     })
 }
 
-// Show and hide thumbs
 function showSimilarThumbs(thumb) {
     let i;
     let visibleThumbs = 0;
@@ -362,147 +328,6 @@ function showSimilarThumbs(thumb) {
     root.style.setProperty("--similarInfoThumbMaxWidth", "calc(" + ((displayItems + 1) - visibleThumbs) + " *" + maxWidth + ")");
     showThumbAnimation(similarThumbs);
 }
-
-$(function () {
-    $('.poster-overlay').on('click', function () {
-        promiseLoginStatus.then(data => {
-            if (data) {
-                getPushedMovieFromDatabase();
-                promisePushedMovie.then(data => {
-                    addMovieToCurrentList(data[0]);
-                });
-            } else {
-                addMovieToCurrentList(getPushedMovieFromCookie()[0]);
-            }
-        });
-    })
-});
-
-$(function () {
-    $('.play-pause').on('click', function () {
-        // block transition time is set in moviePage.css at 1500ms
-        if (!$('.banner').hasClass('toggleBanner')) {
-            $('.header').css('max-height', 560 + "px")
-            $('.banner').fadeOut(1500);
-            $('#refreshButton').fadeIn(FADEIN_TIME);
-            $('#playButton').fadeOut(0);
-            $('#pauseButton').fadeIn(0);
-            $('.video-container').fadeIn(250, function () {
-                $('#button-container').css('background', 'transparent');
-                $('.item').addClass('filter');
-                play();
-                setTimeout(function () {
-                    $('.banner').toggleClass('toggleBanner');
-                    $('#button-container').css('opacity', 0);
-                    root.style.setProperty('--bannerMaxHeight', 560 + "px");
-                }, 1250);
-                if (!$('.banner').hasClass('toggleDropdown') && !$('.banner').hasClass('toggleBanner')) {
-                    arrowUpAnimation();
-                }
-            });
-        }
-    })
-});
-
-$(function () {
-    $('#dropDownButton').on('click', function () {
-        if ($('.banner').hasClass('toggleBanner')) {
-            $('.header').css('max-height', 225 + "px");
-            $('.video-container').fadeOut(1500);
-            $('#pauseButton').fadeOut(0);
-            $('#playButton').fadeIn(0);
-            $('#refreshButton').fadeOut(FADEOUT_TIME);
-            setTimeout(function () {
-                pause();
-                $('.banner').fadeIn(1000);
-                $('.banner').toggleClass('toggleBanner');
-                $('#button-container').css('background', 'rgba(105, 105, 105, 0.25)');
-                $('#button-container').css('opacity', 1);
-                $('.item').removeClass('filter');
-                root.style.setProperty('--bannerMaxHeight', 225 + "px");
-                arrowDownAnimation();
-            }, 500);
-        } else if (!$('.banner').hasClass('toggleDropdown')) {
-            $('.banner').addClass('toggleDropdown');
-            $('.header').css('max-height', 508 + "px")
-            root.style.setProperty('--bannerMaxHeight', 508 + "px");
-            arrowUpAnimation();
-        } else if ($('.banner').hasClass('toggleDropdown')) {
-            $('.banner').removeClass('toggleDropdown');
-            $('.header').css('max-height', 225 + "px");
-            root.style.setProperty('--bannerMaxHeight', 225 + "px");
-            setTimeout(function () {
-                $('#button-container').css('background', 'rgba(105, 105, 105, 0.25)');
-                $('#button-container').css('opacity', 1);
-            }, 500);
-            arrowDownAnimation();
-        }
-    });
-});
-
-$(function () {
-    $('#playText').on('click', function () {
-        if ($('.banner').hasClass('toggleBanner')) {
-            play();
-            $('#playButton').fadeOut(0);
-            $('#pauseButton').fadeIn(0);
-            if (!$('.banner').hasClass('toggleDropdown') && !$('.banner').hasClass('toggleBanner')) {
-                arrowUpAnimation();
-            }
-        }
-    })
-});
-
-$(function () {
-    $('#playButton').on('click', function () {
-        if ($('.banner').hasClass('toggleBanner')) {
-            play();
-            $('#playButton').fadeOut(0);
-            $('#pauseButton').fadeIn(0);
-            if (!$('.banner').hasClass('toggleDropdown') && !$('.banner').hasClass('toggleBanner')) {
-                arrowUpAnimation();
-            }
-        }
-    })
-});
-
-$(function () {
-    $('#pauseButton').on('click', function () {
-        pause();
-        $('#pauseButton').fadeOut(0);
-        $('#playButton').fadeIn(0);
-    })
-})
-
-$(function () {
-    $('#refreshButton').on('click', function () {
-        replay();
-        $('#playButton').fadeOut(0);
-        $('#pauseButton').fadeIn(0);
-    })
-});
-
-$(function () {
-    $('#button-container').on('mouseover', function () {
-        $('#button-container').css('opacity', 1);
-    })
-    $('.video-container').on('mouseover', function () {
-        $('#button-container').css('opacity', 1);
-    })
-});
-
-$(function () {
-    $('#button-container').on('mouseleave', function () {
-        if ($('.banner').hasClass('toggleBanner')) {
-            $('#button-container').css('opacity', 0);
-        }
-    })
-    $('.video-container').on('mouseleave', function () {
-        if ($('.banner').hasClass('toggleBanner')) {
-            $('#button-container').css('opacity', 0);
-        }
-    })
-});
 
 function play() {
     $('.yt_player_iframe').each(function () {
@@ -547,4 +372,179 @@ function clamp(val, min, max) {
     return val < min ? min : (val > max ? max : val);
 }
 
+$(function () {
+    $('.poster-overlay').on('click', function () {
+        promiseLoginStatus.then(data => {
+            if (data) {
+                getPushedMovieFromDatabase();
+                promisePushedMovie.then(data => {
+                    addMovieToCurrentList(data[0]);
+                });
+            } else {
+                addMovieToCurrentList(getPushedMovieFromCookie()[0]);
+            }
+        });
+    })
+});
 
+$(function () {
+    $('.play-pause').on('click', function () {
+        let banner = $('.banner');
+        // block transition time is set in moviePage.css at 1500ms
+        if (!banner.hasClass('toggleBanner')) {
+            $('.header').css('max-height', 560 + "px")
+            banner.fadeOut(1500);
+            $('#refreshButton').fadeIn(FADEIN_TIME);
+            $('#playButton').fadeOut(0);
+            $('#pauseButton').fadeIn(0);
+            $('.video-container').fadeIn(250, function () {
+                $('#button-container').css('background', 'transparent');
+                $('.item').addClass('filter');
+                play();
+                setTimeout(function () {
+                    banner.toggleClass('toggleBanner');
+                    $('#button-container').css('opacity', 0);
+                    root.style.setProperty('--bannerMaxHeight', 560 + "px");
+                }, 1250);
+                if (!banner.hasClass('toggleDropdown') && !banner.hasClass('toggleBanner')) {
+                    arrowUpAnimation();
+                }
+            });
+        }
+    })
+});
+
+$(function () {
+    $('#dropDownButton').on('click', function () {
+        let banner = $('.banner');
+        let buttonContainer = $('#button-container');
+        if (banner.hasClass('toggleBanner')) {
+            $('.header').css('max-height', 225 + "px");
+            $('.video-container').fadeOut(1500);
+            $('#pauseButton').fadeOut(0);
+            $('#playButton').fadeIn(0);
+            $('#refreshButton').fadeOut(FADEOUT_TIME);
+            setTimeout(function () {
+                pause();
+                banner.fadeIn(1000);
+                banner.toggleClass('toggleBanner');
+                buttonContainer.css('background', 'rgba(105, 105, 105, 0.25)');
+                buttonContainer.css('opacity', 1);
+                $('.item').removeClass('filter');
+                root.style.setProperty('--bannerMaxHeight', 225 + "px");
+                arrowDownAnimation();
+            }, 500);
+        } else if (!banner.hasClass('toggleDropdown')) {
+            banner.addClass('toggleDropdown');
+            $('.header').css('max-height', 508 + "px")
+            root.style.setProperty('--bannerMaxHeight', 508 + "px");
+            arrowUpAnimation();
+        } else if (banner.hasClass('toggleDropdown')) {
+            banner.removeClass('toggleDropdown');
+            $('.header').css('max-height', 225 + "px");
+            root.style.setProperty('--bannerMaxHeight', 225 + "px");
+            setTimeout(function () {
+                buttonContainer.css('background', 'rgba(105, 105, 105, 0.25)');
+                buttonContainer.css('opacity', 1);
+            }, 500);
+            arrowDownAnimation();
+        }
+    });
+});
+
+$(function () {
+    $('#playText').on('click', function () {
+        let banner = $('.banner');
+        if (banner.hasClass('toggleBanner')) {
+            play();
+            $('#playButton').fadeOut(0);
+            $('#pauseButton').fadeIn(0);
+            if (!banner.hasClass('toggleDropdown') && !banner.hasClass('toggleBanner')) {
+                arrowUpAnimation();
+            }
+        }
+    })
+});
+
+$(function () {
+    $('#playButton').on('click', function () {
+        let banner = $('.banner');
+        if (banner.hasClass('toggleBanner')) {
+            play();
+            $('#playButton').fadeOut(0);
+            $('#pauseButton').fadeIn(0);
+            if (!banner.hasClass('toggleDropdown') && !banner.hasClass('toggleBanner')) {
+                arrowUpAnimation();
+            }
+        }
+    })
+});
+
+$(function () {
+    $('#pauseButton').on('click', function () {
+        pause();
+        $('#pauseButton').fadeOut(0);
+        $('#playButton').fadeIn(0);
+    })
+})
+
+$(function () {
+    $('#refreshButton').on('click', function () {
+        replay();
+        $('#playButton').fadeOut(0);
+        $('#pauseButton').fadeIn(0);
+    })
+});
+
+$(function () {
+    $('#button-container').on('mouseover', function () {
+        $('#button-container').css('opacity', 1);
+    })
+    $('.video-container').on('mouseover', function () {
+        $('#button-container').css('opacity', 1);
+    })
+});
+
+$(function () {
+    $('#button-container').on('mouseleave', function () {
+        if ($('.banner').hasClass('toggleBanner')) {
+            $('#button-container').css('opacity', 0);
+        }
+    })
+    $('.video-container').on('mouseleave', function () {
+        if ($('.banner').hasClass('toggleBanner')) {
+            $('#button-container').css('opacity', 0);
+        }
+    })
+});
+
+$(function () {
+    let poster = $('.poster');
+    let overlay = $('.poster-overlay');
+    poster.on("mouseover", function () {
+        overlay.css('opacity', 1);
+        poster.find('img').css('border', '1px solid cadetblue');
+    })
+    poster.on("mouseleave", function () {
+        overlay.css('opacity', 0);
+        poster.find('img').css('border', '1px solid black');
+    })
+    overlay.on("mouseover", function () {
+        overlay.css('opacity', 1);
+        poster.find('img').css('border', '1px solid cadetblue');
+    })
+    overlay.on("mouseleave", function () {
+        overlay.css('opacity', 0);
+        poster.find('img').css('border', '1px solid black');
+    })
+});
+
+$(function () {
+    let similarThumb = $('.similar');
+    similarThumb.on("mouseover", function () {
+        $('#similarLabel-container').css('opacity', 0);
+    })
+    similarThumb.on("mouseleave", function () {
+        $('#similarLabel-container').css('opacity', 1);
+    })
+});

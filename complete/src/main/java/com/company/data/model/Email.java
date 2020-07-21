@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Email {
 
-    private final long id;
+    private long id;
     private String type;
     private String recipient;
     private String subject;
@@ -12,8 +12,8 @@ public class Email {
 
     private static ArrayList<Email> Emails = new ArrayList<>();
 
-    public Email(long id, String recipient, String subject, String body) {
-        this.id = id;
+    public Email(String type, String recipient, String subject, String body) {
+        this.type = type;
         this.recipient = recipient;
         this.subject = subject;
         this.body = body;
@@ -29,6 +29,10 @@ public class Email {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getType() {

@@ -16,9 +16,9 @@ let slideIndex = 1;
 let slides = [];
 let thumbs = [];
 let thumbsToLoad = 0;
+let pageLoad = true;
 
 function initListPage() {
-    // deleteCookie("moviePush");
     let height = (slideHeight - 10) + "px";
     root.style.setProperty("--slideHeight", height);
     $('.loaderPage').fadeIn(FADEIN_TIME);
@@ -30,7 +30,7 @@ function initListPage() {
             $('#account').removeClass('hide');
             getCurrentList();
             promiseCurrentList.then(data => {
-                if(data != null) {
+                if (data != null) {
                     if (data.listItems != null) {
                         privateListItems = data.listItems;
                     }
@@ -39,20 +39,11 @@ function initListPage() {
         } else {
             $('#login').fadeIn(0);
             $('#account').addClass('hide');
-            publicListItems = getPublicListItems();
         }
         buildMovieList();
+        publicListItems = getPublicListItems();
     });
 }
-
-$(function () {
-    $('.header').on("mouseover", function () {
-        $('#myWatchlistLabel-container').css('opacity', 0);
-    })
-    $('.header').on("mouseleave", function () {
-        $('#myWatchlistLabel-container').css('opacity', 1);
-    })
-});
 
 function buildMovieList() {
     getLoginStatus();
@@ -74,7 +65,7 @@ function buildMovieList() {
                             privateListItems.push(listItems[i]);
                             let title = listItems[i].title;
                             let year = listItems[i].release_year;
-                            retrieveSearch(title, year,0,'update', "");
+                            retrieveSearch(title, year, 0, 'update', "");
                         }
                     } else {
                         $('.loaderPage').fadeOut(FADEOUT_TIME, function () {
@@ -99,7 +90,7 @@ function buildMovieList() {
                     removeHidden();
                 });
                 setCookie(publicListItems, '', NO_END_DATE);
-            } else if (publicListItems.length == 0) {
+            } else if (publicListItems.length === 0) {
                 $('.loaderPage').fadeOut(FADEOUT_TIME, function () {
                     alertSuccess("Welcome! Try making your new list", longTimeOut);
                     removeHidden();
@@ -109,7 +100,7 @@ function buildMovieList() {
                 for (let i = 0; i < publicListItems.length; i++) {
                     let title = publicListItems[i].title;
                     let year = publicListItems[i].release_year;
-                    retrieveSearch(title, year,0,'update', "");
+                    retrieveSearch(title, year, 0, 'update', "");
                 }
             }
             $('#myWatchlistLabel-container').find('div').text("MyWatchlist: My first watchlist");
@@ -118,13 +109,12 @@ function buildMovieList() {
 }
 
 function processSearch(search, type) {
-    // check search identifier for null
-    if (search.returnValue == '-1') {
+    let text = $('.replyText');
+    if (search.returnValue === null) {
         alertFailure("No results where found", longTimeOut);
     } else {
         const {poster_url, overview, title, release_year} = search.results;
         if (type === 'searchBox') {
-            // update search box
             let poster = "";
             if (search.poster !== null) {
                 poster = "data:image/png;base64," + search.poster;
@@ -136,8 +126,8 @@ function processSearch(search, type) {
                 $('#searchPoster').attr('src', poster);
                 $('#replyTitle').text(title + " (" + release_year + ")");
                 $('#replyOverview').text(overview);
-                $('.replyText').display = "block";
-                $('.replyText').fadeIn(FADEIN_TIME);
+                text.display = "block";
+                text.fadeIn(FADEIN_TIME);
                 searchResultAnimation();
             });
         } else if (type === 'update') {
@@ -151,7 +141,7 @@ function processSearch(search, type) {
 
 function addThumb() {
     const {poster_url} = search.results;
-    let poster = "";
+    let poster;
     if (search.poster !== null) {
         poster = "data:image/png;base64," + search.poster;
     } else {
@@ -168,7 +158,7 @@ function addThumb() {
 // below "argument type string not assignable to parameter type Jquery" appeared in 2020.1 version of IntelliJ?
 function addSlide() {
     const {vote_average, overview, release_year, poster_url, id, title} = search.results;
-    let poster = "";
+    let poster;
     if (search.poster !== null) {
         poster = "data:image/png;base64," + search.poster;
     } else {
@@ -183,7 +173,6 @@ function addSlide() {
     let deleteButton = cloneSlide.find('#templateDeleteButton');
     deleteButton.removeAttr('id');
     deleteButton.addClass('deleteButton');
-    // update slide info
     cloneSlide.find('.title').text(title + " (" + release_year + ")");
     cloneSlide.find('.rating').text(vote_average);
     cloneSlide.find('.plot').text(overview);
@@ -205,12 +194,10 @@ function refreshPage() {
 }
 
 function indexElements() {
-    // find elements
     slides = document.getElementsByClassName('slide');
     thumbs = document.getElementsByClassName('thumb');
     let i;
     let slide = 0;
-    // set element id used to order slides and create event listeners
     for (i = 0; i < slides.length; i++) {
         slide++;
         slides[i].setAttribute('slideId', slide + '');
@@ -224,7 +211,6 @@ function indexElements() {
         createEventListenerTitle(i, slide);
         createEventListenerDeleteButton(i, slide);
     }
-    // set element id used by thumb slideshow and create event listeners
     let thumb = 0;
     for (i = 0; i < thumbs.length; i++) {
         thumb++;
@@ -267,7 +253,6 @@ function createEventListenerThumb(thumb) {
     })
 }
 
-// Show and hide thumbs
 function showThumbs(thumb) {
     let visibleThumbs = 0;
     for (let i = 0; i < thumbs.length; i++) {
@@ -292,36 +277,38 @@ function showThumbs(thumb) {
     showThumbAnimation(thumbs);
 }
 
-// Cycle position of slides
 function showSlides(slide) {
-    let i;
-    let row;
-    let move;
-    let nextRow = 1;
-    let rows = getRows();
-    let animationDuration = 1000;
-    for (i = 0; i < slides.length; i++) {
-        let slideId = slides[i].getAttribute("slideId");
-        if (slide <= slides.length) {
-            if (slideId == slide) { //do not change to ===!!
-                move = rows[i] - 1;
-                row = 1;
-                slides[i].style.gridRow = row;
+        let row;
+        let move;
+        let nextRow = 1;
+        let rows = getRows();
+        let animationDuration = 1000;
+        for (let i = 0; i < slides.length; i++) {
+            let slideId = slides[i].getAttribute("slideId");
+            if (pageLoad) {
+                $(slides[i]).fadeIn(animationDuration);
             } else {
-                nextRow++;
-                move = rows[i] - nextRow;
-                row = nextRow;
-                slides[i].style.gridRow = row;
+                if (slide <= slides.length) {
+                    if (parseInt(slideId) === parseInt(slide)) {
+                        move = rows[i] - 1;
+                        row = 1;
+                        slides[i].style.gridRow = row;
+                    } else {
+                        nextRow++;
+                        move = rows[i] - nextRow;
+                        row = nextRow;
+                        slides[i].style.gridRow = row;
+                    }
+                    $(slides[i]).fadeIn(animationDuration);
+                    showSlideAnimation(i, move, animationDuration);
+                }
             }
-            $(slides[i]).fadeIn(animationDuration);
-            showSlideAnimation(i, move, animationDuration);
+            pageLoad = false;
         }
-    }
 }
 
 function deleteSlide(slide) {
 
-    let i;
     let deleteThumb = thumbs[slide - 1];
     let deleteSlide = slides[slide - 1];
 
@@ -329,7 +316,7 @@ function deleteSlide(slide) {
     promiseCurrentList.then(data => {
         if (data) {
             let id = deleteSlide.getAttribute('movieId');
-            for (i = 0; i < privateListItems.length; i++) {
+            for (let i = 0; i < privateListItems.length; i++) {
                 if (privateListItems[i].id === id) {
                     privateListItems = data.listItems;
                     privateListItems.splice(i, 1);
@@ -345,8 +332,7 @@ function deleteSlide(slide) {
                 if (publicListItems[i].id === id) {
                     publicListItems.splice(i, 1);
                     let listTitle = "movieList";
-                    let listItems = publicListItems;
-                    updatePublicList(listTitle, listItems);
+                    updatePublicList(listTitle, publicListItems);
                     alertSuccess("Deleted movie from MyWatchlist", shortTimeOut);
                 }
             }
@@ -357,7 +343,7 @@ function deleteSlide(slide) {
         let nextRow = 0;
         let rows = getRows();
         let animationDuration = 1000;
-        for (i = 0; i < slides.length; i++) {
+        for (let i = 0; i < slides.length; i++) {
             if (slide <= slides.length) {
                 if (slides[i] === deleteSlide) {
                     move = rows[i] - (slides.length);
@@ -382,15 +368,11 @@ function deleteSlide(slide) {
     });
 }
 
-// Thumbnail controls
 function currentThumb(thumb) {
-    // if (thumb !== slideIndex) {
     slideIndex = thumb;
     showSlides(slideIndex);
-    // }
 }
 
-// slideshow controls
 function nextThumb(thumb) {
     let currentThumb = thumbIndex;
     currentThumb += (thumb * displayItems);
@@ -412,16 +394,15 @@ function removeHidden() {
 
 // find current rows for slides
 function getRows() {
-    let i;
     let top;
     let rows = [];
     let rowsTop = [];
-    for (i = 0; i < slides.length; i++) {
+    for (let i = 0; i < slides.length; i++) {
         top = $(slides[i]).offset().top;
         rowsTop.push(top);
     }
     const rowHeight = Math.min.apply(null, rowsTop);
-    for (i = 0; i < slides.length; i++) {
+    for (let i = 0; i < slides.length; i++) {
         top = $(slides[i]).offset().top;
         let row = ((top - rowHeight) / slideHeight) + 1;
         rows.push(Math.round(row));
@@ -432,3 +413,13 @@ function getRows() {
 function clamp(val, min, max) {
     return val < min ? min : (val > max ? max : val);
 }
+
+$(function () {
+    let header = $('.header');
+    header.on("mouseover", function () {
+        $('#myWatchlistLabel-container').css('opacity', 0);
+    })
+    header.on("mouseleave", function () {
+        $('#myWatchlistLabel-container').css('opacity', 1);
+    })
+});

@@ -25,6 +25,7 @@ function initLogin() {
         if (data) {
             $('#login').fadeOut(0);
             $('#account').removeClass('hide');
+            importPublicList();
         } else {
             $('#login').fadeIn(0);
             $('#account').addClass('hide');
@@ -105,7 +106,12 @@ $(function () {
 
 $(function () {
     $('#loginFormSubmit').on('click', function () {
+
         hideLoginMessage();
+
+        let loader = $('.loaderLoginBox');
+        let account = $('#account');
+
         let isFilledOut = false;
         if (document.querySelector('#loginFormUser').value !== "" &&
             document.querySelector('#loginFormPass').value !== "") {
@@ -126,34 +132,35 @@ $(function () {
                     userPass: userPass
                 };
 
-                $.getJSON(url, parameters, printUser);
-                $('.loaderLoginBox').fadeIn(FADEIN_TIME);
+                $.getJSON(url, parameters, callback);
+                loader.fadeIn(FADEIN_TIME);
 
-                function printUser(responseJSON) {
-                    $('.loaderLoginBox').fadeOut(FADEOUT_TIME);
-                    setTimeout(function () {
-                        if (responseJSON == true) {
-                            $('#login').fadeOut(0);
-                            $('#account').removeClass('hide');
-                            $('#account').fadeIn(0);
-                            showLoginMessage('Login Successful', alertSuccessColor);
-                            setTimeout(function () {
-                                $('#closeLoginForm').trigger("click");
-                                importPublicList();
-                            }, shortTimeOut);
+                function callback(responseJSON) {
+                    loader.fadeOut(FADEOUT_TIME);
+                    if (responseJSON === true) {
+                        $('#login').fadeOut(0);
+                        account.removeClass('hide');
+                        account.fadeIn(0);
+                        showLoginMessage('Login Successful', alertSuccessColor);
+                        setTimeout(function () {
+                            $('#closeLoginForm').trigger("click");
                             getRole();
                             promiseRole.then(data => {
-                                if (data.role === "Admin") {
-                                    window.location.href = "/adminPage";
-                                }
+                                setTimeout(function () {
+                                    if (data.role === "Admin") {
+                                        window.location.href = "/adminPage";
+                                    } else {
+                                        window.location.href = "/homePage";
+                                    }
+                                }, quickTimeOut);
                             });
-                        } else if (responseJSON == false) {
-                            showLoginMessage('Login failed. Please verify your login credentials.', alertFailureColor);
-                        } else {
-                            let msg = responseJSON["msg"];
-                            showLoginMessage(msg, alertFailureColor);
-                        }
-                    }, shortTimeOut);
+                        }, shortTimeOut);
+                    } else if (responseJSON === false) {
+                        showLoginMessage('Login failed. Please verify your login credentials.', alertFailureColor);
+                    } else {
+                        let msg = responseJSON["msg"];
+                        showLoginMessage(msg, alertFailureColor);
+                    }
                 }
             }
         } else {
@@ -177,7 +184,10 @@ $(function () {
 
 $(function () {
     $('#accountCreationSubmit').on('click', function () {
+
             hideLoginMessage();
+            let loader = $('.loaderLoginBox');
+
             let isFilledOut = false;
             if (document.querySelector('#accountCreationUser').value !== "" &&
                 document.querySelector('#accountCreationPass').value !== "" &&
@@ -204,20 +214,20 @@ $(function () {
                         userEmail: userEmail
                     };
 
-                    $.getJSON(url, parameters, printUser);
-                    $('.loaderLoginBox').fadeIn(FADEIN_TIME);
+                    $.getJSON(url, parameters, callback);
+                    loader.fadeIn(FADEIN_TIME);
 
-                    function printUser(responseJSON) {
-                        $('.loaderLoginBox').fadeOut(FADEOUT_TIME);
+                    function callback(responseJSON) {
+                        loader.fadeOut(FADEOUT_TIME);
                         setTimeout(function () {
                             $('loginFormMessage').fadeOut(FADEOUT_TIME);
-                            if (responseJSON == true) {
+                            if (responseJSON === true) {
                                 showLoginMessage('A verification email has been sent. Please check your email.', alertSuccessColor);
                                 setTimeout(function () {
                                     $('#refreshLoginForm').trigger("click");
                                     $('#closeLoginForm').trigger("click");
                                 }, longTimeOut * 2.5);
-                            } else if (responseJSON == false) {
+                            } else if (responseJSON === false) {
                                 showLoginMessage('Oeps! Something went wrong. Please try again.', alertFailureColor);
                             } else {
                                 let msg = responseJSON["msg"];
@@ -235,7 +245,10 @@ $(function () {
 
 $(function () {
     $('#loginVerificationSubmit').on('click', function () {
+
         hideLoginMessage();
+        let loader = $('.loaderLoginBox');
+
         let isFilledOut = false;
         if (document.querySelector('#loginFormUser').value !== "" &&
             document.querySelector('#loginFormPass').value !== "") {
@@ -257,13 +270,13 @@ $(function () {
                     userPass: userPass
                 };
 
-                $.getJSON(url, parameters, printUser);
-                $('.loaderLoginBox').fadeIn(FADEIN_TIME);
+                $.getJSON(url, parameters, callback);
+                loader.fadeIn(FADEIN_TIME);
 
-                function printUser(data) {
-                    $('.loaderLoginBox').fadeOut(FADEOUT_TIME);
+                function callback(data) {
+                    loader.fadeOut(FADEOUT_TIME);
                     setTimeout(function () {
-                        if (data == true) {
+                        if (data === true) {
                             showLoginMessage('Registration Successful!', alertSuccessColor)
                             setTimeout(function () {
                                 window.location = '/homePage';
@@ -282,7 +295,10 @@ $(function () {
 
 $(function () {
     $('#requestLink').on('click', function () {
+
         hideLoginMessage();
+        let loader = $('.loaderLoginBox');
+
         let isFilledOut = false;
         if (document.querySelector('#requestLinkEmail').value !== "") {
             isFilledOut = true;
@@ -294,18 +310,18 @@ $(function () {
                 userEmail: userEmail
             };
 
-            $.getJSON(url, parameters, printUser);
-            $('.loaderLoginBox').fadeIn(FADEIN_TIME);
+            $.getJSON(url, parameters, callback);
+            loader.fadeIn(FADEIN_TIME);
 
-            function printUser(responseJSON) {
-                $('.loaderLoginBox').fadeOut(FADEOUT_TIME);
+            function callback(responseJSON) {
+                loader.fadeOut(FADEOUT_TIME);
                 setTimeout(function () {
-                    if (responseJSON == true) {
+                    if (responseJSON === true) {
                         $('.formWrapLoginForm').fadeOut(FADEOUT_TIME, function () {
                             $('.loginFormText').find("h1").text("Email sent!");
                             showLoginMessage('A verification link has been sent to your email.', alertSuccessColor);
                         });
-                    } else if (responseJSON == false) {
+                    } else if (responseJSON === false) {
                         showLoginMessage('The email address provided is not valid!', alertFailureColor);
                     }
                 }, shortTimeOut);
@@ -316,31 +332,11 @@ $(function () {
     });
 });
 
-function importPublicList() {
-    if (publicListItems !== null && publicListItems.length !== 0) {
-        $('#list').trigger("click");
-        $('.listFormText').fadeOut(0);
-        $('.listFormReplyText').fadeIn(0);
-        $('#refreshListForm').fadeOut(0);
-        $('#closeListForm').fadeIn(0);
-        $('#listCreationSubmit').fadeOut(0);
-        $('#listImportSubmit').fadeIn(0);
-        showListMessage("You have a list stored as a cookie. You can import it to your account and the cookie will be deleted.", alertSuccessColor);
-        document.querySelector('.listTitle').innerHTML = "Import list";
-        document.querySelector('#listCreationName').value = "MyWatchlist";
-        $('#listCreationDescription').text("My first watchList");
-    } else {
-        setTimeout(function () {
-            location.reload();
-        }, shortTimeOut);
-    }
-}
-
 $(function () {
     $(".togglePassword").on('click', function () {
         $(this).toggleClass("fa-eye fa-eye-slash");
         let input = $($(this).attr("toggle"));
-        if (input.attr("type") == "password") {
+        if (input.attr("type") === "password") {
             input.attr("type", "text");
         } else {
             input.attr("type", "password");

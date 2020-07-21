@@ -1,0 +1,222 @@
+:root {
+
+    /* banner and movie slideshow variables*/
+    --displayItems: 3; /*item is used for calculation in .js script*/
+    --bannerMargin: 5px;
+    --bannerHeight: 26.3vw; /*lower value in case off overflow*/
+    --bannerWidth: 100%;
+    --maxBannerHeight: 167px;
+    --newThumbWidth: 17.4vw;
+    --newThumbMaxWidth: calc(0.66 * 167px); /*take from --maxBannerHeight*/
+    --popularInfoThumbWidth: calc(3 * 17.4vw); /*calculated in .js script*/
+    --popularInfoThumbMaxWidth: calc(3 * 167px); /*calculated in .js script*/
+    --topRatedInfoThumbWidth: calc(3 * 17.4vw); /*calculated in .js script*/
+    --topRatedInfoThumbMaxWidth: calc(3 * 167px); /*calculated in .js script*/
+    --slideHeight: 220; /*item is used for calculation in .js script*/
+    --backgroundColor: rgba(0, 0, 0, 1); /*for alert popup --> set in .js script*/
+
+    /*loader variables*/
+    --primary: cadetblue;
+    --primary-dark: #0095A9;
+    --primary-lightest: #2BDBE7;
+    --gray-dark: #1A2329;
+    --cold-gray-dark: dimgrey;
+    --custom-ease: cubic-bezier(0.770, 0.000, 0.275, 1.000);
+}
+
+html {
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+*::-webkit-scrollbar {
+    width: 0.4rem;
+}
+
+*::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: cadetblue;
+    outline: 1px solid slategrey;
+    border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+}
+
+input::-ms-reveal, input::-ms-clear {
+    display: none;
+}
+
+body {
+    background-color: black;
+    color: black;
+    text-decoration: none;
+    font-family: "Segoe UI", serif;
+    font-size: 62.5%;
+    text-align: center;
+    justify-items: center;
+    opacity: 0;
+    animation: fadein 1s ;
+    animation-fill-mode: forwards;
+    overflow-x: hidden;
+}
+
+#content {
+    margin: 0 auto;
+    width: 100vw;
+    max-width: 1000px;
+}
+
+#content > * {
+    display: grid;
+    grid-gap: 10px;
+}
+
+.nav {
+    display: grid;
+    grid-gap: 10px;
+    grid-area: navbar;
+    grid-template-columns: repeat(5, 1fr);
+    align-items: center;
+    justify-content: space-around;
+    padding-left: 0.5em;
+    padding-right: 1rem;
+    background-color: dimgray;
+}
+
+.nav .logo a > img {
+    position: relative;
+    top: 5%;
+    width: auto;
+    height: 55px;
+    padding-right: calc(1vw + 5px);
+}
+
+.nav .navButtons {
+    width: min-content;
+    margin-left: 1.5vw;
+    margin-right: 1.5vw;
+    font-family: "Segoe UI Historic", serif;
+    text-transform: uppercase;
+    font-size: 18px;
+}
+
+.nav .navButtons::before {
+    content: "";
+    display: block;
+    height: 4px;
+    width: 0;
+    position: relative;
+    top: 30px;
+    background-color: cadetblue;
+    transition: all ease-in-out 250ms;
+}
+
+.nav .navButtons:hover {
+    color: cadetblue;
+}
+
+.nav .navButtons:hover::before {
+    width: 100%;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hide {
+    display: none;
+    visibility: hidden;
+}
+
+h1 {
+    text-transform: uppercase;
+    font-size: 18px;
+}
+
+h2 {
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+h3 {
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+h4 {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+p {
+    font-size: 15px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+.footer a {
+    color: #1A2329;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: cadetblue;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid black;
+    margin-top: 0;
+}
+
+.scroll-left {
+    transform:translateX(100%);
+    animation: scroll-left 25s linear infinite;
+    animation-direction: alternate;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(50px);
+    }
+}
+
+@keyframes scroll-left {
+    0% {
+        -moz-transform: translateX(-15%); /* Browser bug fix */
+        -webkit-transform: translateX(-15%); /* Browser bug fix */
+        transform: translateX(-15%);
+    }
+    100% {
+        -moz-transform: translateX(15%); /* Browser bug fix */
+        -webkit-transform: translateX(15%); /* Browser bug fix */
+        transform: translateX(15%);
+    }
+}

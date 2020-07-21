@@ -42,27 +42,31 @@ $(function () {
 
 $(function () {
     $('#accountFormSubmit').on('click', function () {
+
         hideAccountMessage();
+
+        let loader = $('.loaderAccountBox');
+        let account = $('#account');
         let url = "/logOut";
 
-        $.getJSON(url, returnStatus);
-        $('.loaderAccountBox').fadeIn(FADEIN_TIME);
+        $.getJSON(url, callback);
+        loader.fadeIn(FADEIN_TIME);
 
-        function returnStatus(data) {
-            $('.loaderAccountBox').fadeOut(FADEOUT_TIME);
+        function callback(data) {
+            loader.fadeOut(FADEOUT_TIME);
             setTimeout(function () {
-                if (data == true) {
-                    $('#account').fadeOut(0);
-                    $('#account').addClass('hide');
+                if (data === true) {
+                    account.fadeOut(0);
+                    account.addClass('hide');
                     $('#login').fadeIn(0);
                     showAccountMessage('Log out successful', alertSuccessColor);
                     setTimeout(function () {
                         $('#closeAccountForm').trigger("click");
                         setTimeout(function () {
                             window.location.href = "/homePage";
-                        },shortTimeOut);
+                        },quickTimeOut);
                     }, shortTimeOut);
-                } else if (data == false) {
+                } else if (data === false) {
                     showAccountMessage('Oeps! An unknown error occurred :(', alertFailureColor);
                 }
             }, shortTimeOut);
@@ -72,18 +76,22 @@ $(function () {
 
 $(function () {
     $('#accountFormDelete').on('click', function () {
+
         hideAccountMessage();
+
+        let loader = $('.loaderAccountBox');
+        let account = $('#account');
         let url = "/deleteAccount";
 
-        $.getJSON(url, returnStatus);
-        $('.loaderAccountBox').fadeIn(FADEIN_TIME);
+        $.getJSON(url, callback);
+        loader.fadeIn(FADEIN_TIME);
 
-        function returnStatus(data) {
-            $('.loaderAccountBox').fadeOut(FADEOUT_TIME);
+        function callback(data) {
+            loader.fadeOut(FADEOUT_TIME);
             setTimeout(function () {
-                if (data == true) {
-                    $('#account').fadeOut(0);
-                    $('#account').addClass('hide');
+                if (data === true) {
+                    account.fadeOut(0);
+                    account.addClass('hide');
                     $('#login').fadeIn(0);
                     showAccountMessage('Your account has successfully been deleted', alertSuccessColor);
                     setTimeout(function () {
@@ -92,7 +100,7 @@ $(function () {
                             location.reload();
                         },shortTimeOut);
                     }, shortTimeOut);
-                } else if (data == false) {
+                } else if (data === false) {
                     showAccountMessage('Oeps! An unknown error occurred :(', alertFailureColor);
                 }
             }, shortTimeOut);

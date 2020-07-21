@@ -12,13 +12,6 @@ import java.util.ArrayList;
 @RestController
 public class ListController {
 
-//    @GetMapping("/addMovieToList")
-//    public Boolean addMovieToList(HttpSession session,
-//                                  @RequestParam(value = "objectList") String objectList,
-//                                  @RequestParam(value = "objectMovie") String objectMovie) {
-//        return WatchlistBusiness.addMovieToList(objectList, objectMovie, session);
-//    }
-
     @GetMapping("/setPushedMovie")
     public Boolean setPushedMovie(HttpSession session,
                                   @RequestParam(value = "pushedMovie") String pushedMovie) {

@@ -26,15 +26,15 @@ public class Search {
         this.creationDate = creationDate;
     }
 
-    public Search(long id, String title, String year, int returnValue, Instant creationDate) {
-        this.id = id;
+    public Search(String title, String year, int returnValue, Instant creationDate) {
         this.title = title;
         this.year = year;
         this.returnValue = returnValue;
         this.creationDate = creationDate;
     }
 
-    public Search(String title, String year, int returnValue, Instant creationDate) {
+    public Search(long id, String title, String year, int returnValue, Instant creationDate) {
+        this.id = id;
         this.title = title;
         this.year = year;
         this.returnValue = returnValue;

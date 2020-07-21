@@ -20,7 +20,7 @@ public class User {
 
     private static ArrayList<User> users = new ArrayList<>();
 
-    private static final int EXPIRY_TIME = 60 * 60 * 24;
+    private static final int TOKEN_EXPIRY_TIME = ApplicationConfig.getTokenExpiryTime();
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
@@ -151,8 +151,7 @@ public class User {
     }
 
     public void setTokenExpiryDate() {
-        Instant expiryDate = Instant.now().plusSeconds(EXPIRY_TIME);
-        this.tokenExpiryDate = expiryDate;
+        this.tokenExpiryDate = Instant.now().plusSeconds(TOKEN_EXPIRY_TIME);
     }
 
     @Override
@@ -160,6 +159,7 @@ public class User {
         return "\n" +
                 "UserId: " + id + "; " +
                 "Username: " + name + "; " +
+                "Role: " + role + "; " +
                 "Password: " + password + "; " +
                 "Email: " + emailAddress + "; " +
                 "Validated: " + getValidated() + "; " +

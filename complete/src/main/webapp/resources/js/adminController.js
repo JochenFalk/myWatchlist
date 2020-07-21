@@ -4,6 +4,7 @@ jQuery(function () {
 });
 
 let loadedObject;
+let itemIndex;
 
 function initAdmin() {
 
@@ -25,11 +26,11 @@ function initAdmin() {
         } else {
             $('#login').fadeIn(0);
             $('#account').addClass('hide');
-            publicListItems = getPublicListItems();
         }
         $('.loaderPage').fadeOut(FADEOUT_TIME);
         $('.adminFormMessage').fadeOut(0);
         $('#templateInput').fadeOut(0);
+        publicListItems = getPublicListItems();
         removeHidden();
     });
 }
@@ -42,18 +43,10 @@ function removeHidden() {
     }
 }
 
-function showAdminMessage(msg, color) {
-    let messageContainer = $('.adminFormMessage');
-    messageContainer.text(msg);
-    messageContainer.css('color', color);
-    messageContainer.fadeIn(FADEIN_TIME);
-}
-
-function hideAdminMessage() {
-    $('.adminFormMessage').fadeOut(0);
-}
-
 function loadAdminBox(index) {
+
+    itemIndex = index;
+
     for (let i = 0; i < newOptions.length; i++) {
         let label = newOptions[i];
         let value = newQueryResults[newOptions[i]][index]
@@ -82,12 +75,6 @@ function loadAdminBox(index) {
         $(inputField).css('height', height + "px");
     }
 }
-
-// $(function () {
-//     $('#admin').on('click', function () {
-//         $('.adminBox').addClass('showAdminBox');
-//     })
-// });
 
 $(function () {
     $('#closeAdminBox').on('click', function () {
@@ -145,7 +132,8 @@ $(function () {
         let parameters = {
             mappedValues: JSON.stringify(mappedValues),
             loadedObject: loadedObject,
-            newQueryResults: JSON.stringify(newQueryResults)
+            newQueryResults: JSON.stringify(newQueryResults),
+            itemIndex: itemIndex
         };
 
         $.getJSON(url, parameters, function (responseJSON) {

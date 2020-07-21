@@ -6,6 +6,7 @@
     <meta name=description content="Registration failure">
     <meta name=keywords content="">
     <title>Registration failure - My watchlist</title>
+    <link href="<c:url value="/resources/css/commonStyles.css" />" rel="stylesheet"> <%--keep at the top so other style sheets can override it--%>
     <link href="<c:url value="/resources/css/accountVerificationFailure.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/alertPopup.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/loadingAnimation.css" />" rel="stylesheet">

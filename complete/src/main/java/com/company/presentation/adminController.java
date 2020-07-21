@@ -17,7 +17,7 @@ public class adminController {
 
         if (session.getAttribute("role") != null) {
             if (session.getAttribute("role").toString().equals("Admin")) {
-                return AdminBusiness.getPrimaryQuery(selection, session);
+                return AdminBusiness.getPrimaryQuery(selection);
             }
         }
 
@@ -28,11 +28,12 @@ public class adminController {
     public String saveRecord(HttpSession session,
                              @RequestParam(value = "mappedValues") String mappedValues,
                              @RequestParam(value = "loadedObject") String loadedObject,
-                             @RequestParam(value = "newQueryResults") String newQueryResults) {
+                             @RequestParam(value = "newQueryResults") String newQueryResults,
+                             @RequestParam(value = "itemIndex") int itemIndex){
 
         if (session.getAttribute("role") != null) {
             if (session.getAttribute("role").toString().equals("Admin")) {
-                return AdminBusiness.saveRecord(mappedValues, loadedObject, newQueryResults);
+                return AdminBusiness.saveRecord(mappedValues, loadedObject, newQueryResults, itemIndex);
             }
         }
 

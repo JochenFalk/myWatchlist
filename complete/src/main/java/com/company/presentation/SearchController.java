@@ -7,26 +7,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 @RestController
 public class SearchController {
 
-//    @GetMapping("/newSearch")
-//    public Search newSearch(HttpSession session,
-//                            @RequestParam(value = "searchTitle") String searchTitle,
-//                            @RequestParam(value = "searchYear") String searchYear) {
-//
-//        return SearchBusiness.newSearch(searchTitle, searchYear, session);
-//    }
+    @GetMapping("/newSearch")
+    public Search newSearch(@RequestParam(value = "searchTitle") String searchTitle,
+                            @RequestParam(value = "searchYear") String searchYear,
+                            @RequestParam(value = "returnValue") int returnValue) {
 
-    @GetMapping("/nextSearch")
-    public Search newSearch(HttpSession session,
-            @RequestParam(value = "searchTitle") String searchTitle,
-            @RequestParam(value = "searchYear") String searchYear,
-            @RequestParam(value = "returnValue") int returnValue) {
-
-        return SearchBusiness.newSearch(searchTitle, searchYear, returnValue, session);
+        return SearchBusiness.newSearch(searchTitle, searchYear, returnValue);
     }
 
     @GetMapping("/retrieveSearch")
@@ -39,7 +29,7 @@ public class SearchController {
 
     @GetMapping("/saveSearch")
     public void saveSearch(HttpSession session,
-                             @RequestParam(value = "searchObject") String searchObject) throws IOException {
+                             @RequestParam(value = "searchObject") String searchObject) {
 
         SearchBusiness.saveSearch(searchObject, session);
     }

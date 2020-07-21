@@ -49,7 +49,7 @@ function getPushedMovieFromCookie() {
 }
 
 function getPushedMovieFromDatabase() {
-    promisePushedMovie = new Promise((resolve, reject) => {
+    promisePushedMovie = new Promise((resolve) => {
         const url = '/getPushedMovie';
         $.getJSON(url, data => {
             resolve(data);
@@ -58,15 +58,15 @@ function getPushedMovieFromDatabase() {
 }
 
 function setPushedMovieInDatabase(pushedMovie) {
-    let url = "/setPushedMovie";
 
+    let url = "/setPushedMovie";
     let parameters = {
         pushedMovie: JSON.stringify(pushedMovie)
     };
 
-    $.getJSON(url, parameters, returnStatus);
+    $.getJSON(url, parameters, callback);
 
-    function returnStatus(data) {
+    function callback(data) {
         if (data) {
             window.location.href = "/moviePage";
         } else {

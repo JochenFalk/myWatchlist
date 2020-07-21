@@ -1,12 +1,3 @@
-:root {
-    --primary: cadetblue;
-    --primary-dark: #0095A9;
-    --primary-lightest: #2BDBE7;
-    --gray-dark: #1A2329;
-    --cold-gray-dark: dimgrey;
-    --custom-ease: cubic-bezier(0.770, 0.000, 0.275, 1.000);
-}
-
 .loaderLoginBox, .loaderAccountBox, .loaderListBox {
     position: absolute;
     bottom: 13%;

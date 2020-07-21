@@ -13,6 +13,67 @@ function initSearchBox() {
     $('.replyText').fadeOut();
 }
 
+function resetSearchBox() {
+    $('.replyText').fadeOut(FADEOUT_TIME, function () {
+        let text = $('.searchBoxText');
+        $('.replyText').display = "none";
+        $('#searchBoxNextButton').fadeIn(0);
+        text.display = "block";
+        text.fadeIn(FADEIN_TIME);
+    })
+}
+
+function retrieveSearch(searchTitle, searchYear, searchObject, processType, listTitle) {
+    let url = "/retrieveSearch";
+    let parameters = {
+        searchTitle: searchTitle,
+        searchYear: searchYear
+    };
+
+    $.getJSON(url, parameters, function (data) {
+        console.log("retrieved search");
+        if (processType === "build") {
+            loadMoviePage(data);
+        } else if (processType === "update" || processType === "showList" || processType === "searchBox") {
+            search = data;
+            processSearch(data, processType, listTitle);
+        }
+    })
+        .fail(function () {
+            console.log("called new search");
+            callSearch(searchTitle, searchYear, searchObject, processType, listTitle);
+        })
+}
+
+function callSearch(searchTitle, searchYear, searchObject, processType, listTitle) {
+    let url;
+    let parameters;
+    url = "/newSearch";
+    parameters = {
+        searchTitle: searchTitle,
+        searchYear: searchYear,
+        returnValue: searchObject
+    };
+
+    $.getJSON(url, parameters, callback);
+
+    function callback(data) {
+        search = data;
+        processSearch(data, processType, listTitle);
+        saveLastPerformedSearch();
+    }
+}
+
+function saveLastPerformedSearch() {
+    let parameters;
+    let url = "/saveSearch";
+    parameters = {
+        searchObject: JSON.stringify(search)
+    };
+
+    $.getJSON(url, parameters);
+}
+
 $(function () {
     $('#newThumb').on('click', function () {
         $('.searchBox').addClass('showSearchBox');
@@ -38,10 +99,11 @@ $(function () {
 $(function () {
     $('#refreshSearchBox').on('click', function () {
         $('.replyText').fadeOut(FADEOUT_TIME, function () {
+            let text = $('.searchBoxText');
             $('.replyText').display = "none";
             $('#searchBoxNextButton').fadeIn();
-            $('.searchBoxText').display = "block";
-            $('.searchBoxText').fadeIn(FADEIN_TIME);
+            text.display = "block";
+            text.fadeIn(FADEIN_TIME);
         })
     })
 });
@@ -68,7 +130,7 @@ $(function () {
             alertSuccess("Fetching movie info", shortTimeOut);
             let title = document.querySelector('#searchBoxTitle').value;
             let year = document.querySelector('#searchBoxYear').value;
-            callSearch(title, year, searchObject,'searchBox');
+            callSearch(title, year, searchObject, 'searchBox');
         } else {
             alertFailure("Movie title is required for a search", longTimeOut);
         }
@@ -80,65 +142,3 @@ $(function () {
         addMovieToCurrentList(search.results);
     })
 });
-
-function resetSearchBox() {
-    $('.replyText').fadeOut(FADEOUT_TIME, function () {
-        $('.replyText').display = "none";
-        $('#searchBoxNextButton').fadeIn(0);
-        $('.searchBoxText').display = "block";
-        $('.searchBoxText').fadeIn(FADEIN_TIME);
-    })
-}
-
-function retrieveSearch(searchTitle, searchYear, searchObject, processType, listTitle) {
-    let url = "/retrieveSearch";
-    let parameters = {
-        searchTitle: searchTitle,
-        searchYear: searchYear
-    };
-
-    $.getJSON(url, parameters, function(data) {
-        console.log("retrieved search");
-        if (processType === "build") {
-            loadMoviePage(data);
-        } else if (processType === "update" || processType === "showList" || processType === "searchBox") {
-            search = data;
-            processSearch(data, processType, listTitle);
-        }
-    })
-        .fail(function () {
-            console.log("called new search");
-            callSearch(searchTitle, searchYear, searchObject, processType, listTitle);
-        })
-}
-
-function callSearch(searchTitle, searchYear, searchObject, processType, listTitle) {
-    let url;
-    let parameters;
-    url = "/nextSearch";
-    parameters = {
-        searchTitle: searchTitle,
-        searchYear: searchYear,
-        returnValue: searchObject
-    };
-
-    $.getJSON(url, parameters, searchReturn);
-
-    function searchReturn(data) {
-        search = data;
-        processSearch(data, processType, listTitle);
-        // if (processType !== "searchBox") {
-            saveLastPerformedSearch();
-        // }
-    }
-}
-
-function saveLastPerformedSearch() {
-    let parameters;
-    let url = "/saveSearch";
-    parameters = {
-        searchObject: JSON.stringify(search)
-    };
-
-    $.getJSON(url, parameters);
-}

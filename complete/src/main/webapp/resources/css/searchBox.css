@@ -28,7 +28,6 @@
     min-height: 250px;
     max-height: 600px;
     background-color: #222426;
-    /*transform: rotate(64deg);*/
     transition: .74s ease-in-out;
 }
 .showSearchBox {
@@ -135,8 +134,8 @@
 .formWrap input:-webkit-autofill:hover,
 .formWrap input:-webkit-autofill:focus,
 .formWrap input:-webkit-autofill:active {
-    caret-color: dimgray;
-    -webkit-text-fill-color: dimgray;
+    caret-color: lightgrey;
+    -webkit-text-fill-color: lightgrey;
     -webkit-box-shadow: 0 0 0 30px #222426 inset !important;
 }
 

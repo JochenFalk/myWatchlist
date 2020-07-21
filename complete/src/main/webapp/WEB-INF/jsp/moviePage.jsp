@@ -3,9 +3,10 @@
 <html lang="en">
 <head>
     <meta charset=utf-8>
-    <meta name=description content="A watchlist of movies generated from calling TMDB API">
-    <meta name=keywords content="movies, favourite, watch, watchlist, create">
+    <meta name=description content="Create a watchlist of your favourite movies">
+    <meta name=keywords content="movies, favourite, watch, watchlist, create, browse, list, free, account">
     <title>Movie - My watchlist</title>
+    <link href="<c:url value="/resources/css/commonStyles.css" />" rel="stylesheet"> <%--keep at the top so other style sheets can override it--%>
     <link href="<c:url value="/resources/css/moviePage.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/moviePageMenu.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/searchBox.css" />" rel="stylesheet">
@@ -30,14 +31,13 @@
     <nav class="nav">
         <div class="logo">
             <a href="listPage"><img
-                    src="../../resources/images/logo.png"
-                    height="40" width="30" alt="Home"/></a>
+                    src="../../resources/images/logo.png" alt="Home"/></a>
         </div>
         <div class="navButtons"><a href="homePage">Home</a></div>
-        <div id="list" class="navButtons"><a href="javascript:void(null);">lists</a></div>
-        <div id="Search" class="navButtons"><a href="javascript:void(null);">Search</a></div>
-        <div id="login" class="navButtons"><a href="javascript:void(null);">Login</a></div>
-        <div id="account" class="hide navButtons"><a href="javascript:void(null);">account</a></div>
+        <div id="list" class="navButtons"><a href="javascript:null;">lists</a></div>
+        <div id="Search" class="navButtons"><a href="javascript:null;">Search</a></div>
+        <div id="login" class="navButtons"><a href="javascript:null;">Login</a></div>
+        <div id="account" class="hide navButtons"><a href="javascript:null;">account</a></div>
     </nav>
     <header class="header">
         <!--header content-->
@@ -52,7 +52,7 @@
         <div id="button-container">
             <div id="buttons">
                 <img id="dropDownButton" class="item"
-                     src="../../resources/images/arrow-150x150.png" title="Drop down" alt="Show banner">
+                     src="../../resources/images/arrow-150x150.png" title="Toggle banner" alt="Show banner">
                 <img id="playButton" toggle="#banner" class="play-pause item" title="Play trailer" alt="Play trailer"
                      src="../../resources/images/playButton-150x150.png">
                 <img id="pauseButton" class="item" title="Pause trailer" alt="Pause trailer"
@@ -76,38 +76,37 @@
             </p>
             <h3>Directed by</h3>
             <p>
-                <a class="crewDirector" href="javascript:void(null);"></a>
+                <a class="crewDirector" href="javascript:null;"></a>
                 <span> & </span>
-                <a class="crewDirector" href="javascript:void(null);"></a>
+                <a class="crewDirector" href="javascript:null;"></a>
             </p>
             <h3>Written by</h3>
             <p>
-                <a class="crewWriter" href="javascript:void(null);"></a>
+                <a class="crewWriter" href="javascript:null;"></a>
                 <span> & </span>
-                <a class="crewWriter" href="javascript:void(null);"></a>
+                <a class="crewWriter" href="javascript:null;"></a>
             </p>
         </div>
     </main>
     <aside class="aside">
         <a class="poster"><img src="" alt="Movie poster"/></a>
-        <img class="poster-overlay" src="../../resources/images/plus-150x150.png">
+        <img class="poster-overlay" src="../../resources/images/plus-150x150.png" alt="Add movie to list">
     </aside>
     <div class="castInfo">
         <h3>Movie Cast</h3>
         <p>
-            <a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-            <br><a class="castName" href="javascript:void(null);"></a>
-        <p/>
+            <a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
+            <br><a class="castName" href="javascript:null;"></a>
     </div>
     <div class="cast-wrapper">
         <a class="cast hide">
@@ -168,7 +167,7 @@
         </div>
         <div class="thumbSlides">
             <div id="similar-templateThumb" class="hide">
-                <a href="javascript:void(null);"><img
+                <a href="javascript:null;"><img
                         src="../../resources/images/default-poster-332x500-borders.png" alt=""/></a>
             </div>
             <div>
@@ -178,9 +177,9 @@
         <div onclick="similarNextThumb(-1)" class="nextSlide">
             <span>&#10094;</span>
         </div>
-<%--        <div id="similarLabel-container">--%>
-<%--            <div class="slideShowText scroll-left">Browse similar movies</div>--%>
-<%--        </div>--%>
+<%--                <div id="similarLabel-container">--%>
+        <%--                    <div class="slideShowText scroll-left">Browse similar movies</div>--%>
+        <%--                </div>--%>
     </similar>
 </div>
 <!--Hidden search box-->
@@ -237,7 +236,6 @@
                 <img src="../../resources/images/questionmark-150x150.png" alt="">
                 <span class="tooltipText">
                     <span>Length: 6 to 12 characters</span><br>
-                    <!--                    <span>Only alphanumerical characters</span><br>-->
                     <span>Must contain 1 letter</span><br>
                     <span>No consecutive "." or "_"</span><br>
                     <span>No "." followed by "_" or visa versa</span><br>

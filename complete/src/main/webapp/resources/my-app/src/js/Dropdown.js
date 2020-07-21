@@ -2,43 +2,6 @@ let newOptions = [];
 let newQueryResults = [];
 let isUpdated = false;
 
-function resetFields() {
-
-    // let dropDownContainers = document.getElementsByClassName('dropDownContainer');
-    //
-    // for (let i = 0; i < dropDownContainers.length; i++) {
-    //     let parentId = dropDownContainers[i].parentElement.getAttribute('id')
-    //     if (parentId !== "dropdown1") {
-    //         let resultContainer = dropDownContainers[i].nextSibling;
-    //         let dropdownOption = dropDownContainers[i].firstChild.firstChild.nextSibling.nextSibling.firstChild;
-    //         // $(resultContainer).fadeOut(FADEOUT_TIME);
-    //         $(dropdownOption).trigger('click');
-    //         setTimeout(function () {
-    //             $(dropdownOption).trigger('click');
-    //             if (dropDownContainers[i].classList.contains('open')) {
-    //                 $(dropDownContainers[i]).trigger('click');
-    //             }
-    //         }, 10);
-    //     }
-    // }
-}
-
-function updateFields() {
-
-    // let dropDownContainers = document.getElementsByClassName('dropDownContainer');
-    //
-    // for (let i = 0; i < dropDownContainers.length; i++) {
-    //     let resultContainer = dropDownContainers[i].nextSibling;
-    //     let dropdownValue = dropDownContainers[i].firstChild.firstChild.nextSibling.firstChild;
-    //
-    //         if (dropdownValue.innerText === "Select an option") {
-    //             $(resultContainer).fadeOut(FADEOUT_TIME);
-    //         } else {
-    //             $(resultContainer).fadeIn(FADEOUT_TIME);
-    //         }
-    // }
-}
-
 function buildOptionList(data) {
 
     newOptions = [];
@@ -69,14 +32,14 @@ class App extends React.Component {
         this.state = {
             mainState: false,
             mainDropDownValue: "Select an option",
-            setMainState: function (mainState) {
+            setMainState: (mainState) => {
                 this.resetOptions(mainState);
             },
             selectionCount: 1,
-            increaseSelectionCount: function (id) {
+            increaseSelectionCount: (id) => {
                 this.setCount(id, 1);
             },
-            decreaseSelectionCount: function (id) {
+            decreaseSelectionCount: (id) => {
                 this.setCount(id, -1);
             }
         }
@@ -95,10 +58,6 @@ class App extends React.Component {
         if (this.dropdown3.state.addClass === true) {
             this.dropdown3.toggleDropDown();
         }
-        // this.dropdown4.resetOptions();
-        // if (this.dropdown4.state.addClass === true) {
-        //     this.dropdown4.toggleDropDown();
-        // }
     }
 
     setCount(id, modifier) {
@@ -117,14 +76,6 @@ class App extends React.Component {
                     this.updateCount(modifier);
                 }
                 if (this.dropdown3.state.dropDownValue === "Select an option" && modifier === 1) {
-                    this.updateCount(modifier);
-                }
-                break;
-            case "4":
-                if (this.dropdown4.state.dropDownValue !== "Select an option" && modifier === -1) {
-                    this.updateCount(modifier);
-                }
-                if (this.dropdown4.state.dropDownValue === "Select an option" && modifier === 1) {
                     this.updateCount(modifier);
                 }
                 break;
@@ -154,9 +105,7 @@ class App extends React.Component {
                           selectionCount={this.state.selectionCount}
                           increaseSelectionCount={this.state.increaseSelectionCount.bind(this)}
                           decreaseSelectionCount={this.state.decreaseSelectionCount.bind(this)}
-                          ref={dropdown1 => {
-                              this.dropdown1 = dropdown1;
-                          }}/>
+                />
                 <Dropdown id="2"
                           mainState={this.state.mainState}
                           setMainState={this.state.setMainState.bind(this)}
@@ -263,12 +212,10 @@ class Dropdown extends React.Component {
                             return response.json();
                         })
                         .then((data) => {
-                                const {returnValues: returnValues} = data;
-                                this.field.displaySelection(returnValues);
-                                buildOptionList(data);
-                            },
-                            (error) => {
-                            });
+                            const {returnValues: returnValues} = data;
+                            this.field.displaySelection(returnValues);
+                            buildOptionList(data);
+                        });
                 } else {
                     let emptyArray = []
                     this.field.displaySelection(emptyArray);
@@ -346,9 +293,6 @@ class Dropdown extends React.Component {
                         </div>
                     </div>
                 </div>
-                {/*<input id="listFormSubmit" className="button" value="Load list"/>*/}
-                {/*<input id="listFormDelete" className="button" value="Delete list"/>*/}
-                {/*<input id="listFormCreate" className="button" value="Create list"/>*/}
                 <Field id={this.props.id}
                        mainState={this.props.mainState}
                        dropDownValue={this.state.dropDownValue}
@@ -375,9 +319,6 @@ class Field extends React.Component {
         if (returnValues !== null) {
             let titles = [];
             for (let i = 0; i < returnValues.length; i++) {
-                if (i === 0) {
-                    updateFields();
-                }
                 titles.push(returnValues[i]);
             }
 
@@ -437,7 +378,7 @@ class Field extends React.Component {
                         return <span id="admin" className="field"
                                      style={style2}
                                      key={index}
-                                     onClick={evt => this.openAdminBox(this.props, index)}>{titles}
+                                     onClick={() => this.openAdminBox(this.props, index)}>{titles}
                         </span>
                     })
                 }
@@ -446,39 +387,9 @@ class Field extends React.Component {
     }
 }
 
-// class Input extends React.Component {
-//     constructor(props) {
-//         super(props);
-//
-//         this.state = {
-//             values: newOptions
-//         }
-//     }
-//
-//     render() {
-// console.log("force render")
-//         return (
-//             <React.Fragment>
-//                 {
-//                     this.state.values.map((values, index) => {
-//                         return <input key={index} placeholder="input" type="text"> {values} </input>
-//                     })
-//                 }
-//             </React.Fragment>
-//         )
-//     }
-// }
-
 ReactDOM.render(
     <React.Fragment>
         <App/>
     </React.Fragment>,
     document.getElementById('root')
 );
-
-// ReactDOM.render(
-//     <React.Fragment>
-//         <Input/>
-//     </React.Fragment>,
-//     document.getElementById('adminForm')
-// );

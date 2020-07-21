@@ -3,9 +3,10 @@
 <html lang="en">
 <head>
     <meta charset=utf-8>
-    <meta name=description content="Create watchlist of your favourite movies">
-    <meta name=keywords content="movies, favourite, watch, watchlist, create">
+    <meta name=description content="Create a watchlist of your favourite movies">
+    <meta name=keywords content="movies, favourite, watch, watchlist, create, browse, list, free, account">
     <title>Home - My watchlist</title>
+    <link href="<c:url value="/resources/css/commonStyles.css" />" rel="stylesheet"> <%--keep at the top so other style sheets can override it--%>
     <link href="<c:url value="/resources/css/homePage.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/searchBox.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/loginForm.css" />" rel="stylesheet">
@@ -28,13 +29,13 @@
 <div id="content" class="hide un-hide">
     <nav class="nav">
         <div class="logo">
-            <a href="listPage"><img src="../../resources/images/logo.png" height="40" width="30" alt="Home"/></a>
+            <a href="listPage"><img src="../../resources/images/logo.png" alt="Home"/></a>
         </div>
         <div class="navButtons"><a href="homePage">Home</a></div>
-        <div id="list" class="navButtons"><a href="javascript:void(null);">lists</a></div>
-        <div id="Search" class="navButtons"><a href="javascript:void(null);">Search</a></div>
-        <div id="login" class="navButtons"><a href="javascript:void(null);">Login</a></div>
-        <div id="account" class="hide navButtons"><a href="javascript:void(null);">account</a></div>
+        <div id="list" class="navButtons"><a href="javascript:null;">lists</a></div>
+        <div id="Search" class="navButtons"><a href="javascript:null;">Search</a></div>
+        <div id="login" class="navButtons"><a href="javascript:null;">Login</a></div>
+        <div id="account" class="hide navButtons"><a href="javascript:null;">account</a></div>
     </nav>
     <popular class="popular">
         <div onclick="popularNextThumb(1)" class="prevSlide">
@@ -42,7 +43,7 @@
         </div>
         <div class="thumbSlides">
             <div id="popular-templateThumb" class="hide">
-                <a href="javascript:void(null);"><img
+                <a href="javascript:null;"><img
                         src="../../resources/images/default-poster-332x500-borders.png" alt=""/></a>
             </div>
             <div>
@@ -60,16 +61,14 @@
         <h1> Welcome to MyWatchlist!</h1>
         <p>
             Feel free to browse around and add some movies to your own list. You dont even need to sign up
-            for an account to do so. Just browse and hit the "placeholder" button. If you like what you
+            for an account to do so. Just browse and hit the "plus" button on the movie poster. If you like what you
             see feel free to sign up for a free account and create up to 10 list with a total of 500 movies.
-        </p>
         <p>
             We do use some cookies to get all this to work. So be careful not to delete those. Dont
             like that? No problem! Use a free account and be sure your list is securely saved on our servers.
         <h2>
             Happy browsing :)
         </h2>
-        </p>
     </main>
     <topRated class="topRated">
         <div onclick="topRatedNextThumb(1)" class="prevSlide">
@@ -77,7 +76,7 @@
         </div>
         <div class="thumbSlides">
             <div id="topRated-templateThumb" class="hide">
-                <a href="javascript:void(null);"><img
+                <a href="javascript:null;"><img
                         src="../../resources/images/default-poster-332x500-borders.png" alt=""/></a>
             </div>
             <div>
@@ -93,7 +92,7 @@
     </topRated>
     <footer class="footer">
         <p style="margin: auto;"> Please send us an <a
-                href="mailto:jochenfalk@gmail.com?subject=Movie request">email</a> if you
+                href="mailto:my.watchlist.app@gmail.com?subject=Information request">email</a> if you
             have any questions or remarks and we'll try to get back to you as soon as possible.
         </p>
     </footer>

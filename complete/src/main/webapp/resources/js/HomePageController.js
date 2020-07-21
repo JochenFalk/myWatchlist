@@ -21,7 +21,6 @@ let popularThumbs = [];
 let topRatedThumbs = [];
 
 function initHomePage() {
-    // deleteCookie("moviePush");
     getSystemList("Popular", "System");
     getSystemList("TopRated", "System");
     $('.loaderPage').fadeIn(FADEIN_TIME);
@@ -42,28 +41,10 @@ function initHomePage() {
         } else {
             $('#login').fadeIn(0);
             $('#account').addClass('hide');
-            publicListItems = getPublicListItems();
         }
+        publicListItems = getPublicListItems();
     });
 }
-
-$(function () {
-    $('.popular').on("mouseover", function () {
-        $('#popularLabel-container').css('opacity', 0);
-    })
-    $('.popular').on("mouseleave", function () {
-        $('#popularLabel-container').css('opacity', 1);
-    })
-});
-
-$(function () {
-    $('.topRated').on("mouseover", function () {
-        $('#topRatedLabel-container').css('opacity', 0);
-    })
-    $('.topRated').on("mouseleave", function () {
-        $('#topRatedLabel-container').css('opacity', 1);
-    })
-});
 
 function getSystemList(listTitle, userName) {
     let url = "/getSystemList";
@@ -87,7 +68,6 @@ function getSystemList(listTitle, userName) {
         })
 }
 
-// slideshow controls
 function popularNextThumb(thumb) {
     let currentThumb = popularThumbIndex;
     currentThumb += (thumb * displayItems);
@@ -100,7 +80,6 @@ function popularNextThumb(thumb) {
     }
 }
 
-// slideshow controls
 function topRatedNextThumb(thumb) {
     let currentThumb = topRatedThumbIndex;
     currentThumb += (thumb * displayItems);
@@ -114,7 +93,7 @@ function topRatedNextThumb(thumb) {
 }
 
 function processSearch(search, type, listTitle) {
-    // check search identifier for null
+    let text = $('.replyText');
     if (search.returnValue === null) {
         alertFailure("No results where found", longTimeOut);
     } else {
@@ -132,8 +111,8 @@ function processSearch(search, type, listTitle) {
                 $('#searchPoster').attr('src', poster);
                 $('#replyTitle').text(title + " (" + release_year + ")");
                 $('#replyOverview').text(overview);
-                $('.replyText').display = "block";
-                $('.replyText').fadeIn(FADEIN_TIME);
+                text.display = "block";
+                text.fadeIn(FADEIN_TIME);
                 searchResultAnimation();
             });
         } else if (type === "showList") {
@@ -157,7 +136,7 @@ function processSearch(search, type, listTitle) {
 
 function addPopularThumb() {
     const {poster_url, id} = search.results;
-    let poster = "";
+    let poster;
     if (search.poster !== null) {
         poster = "data:image/png;base64," + search.poster;
     } else {
@@ -175,7 +154,7 @@ function addPopularThumb() {
 
 function addTopRatedThumb() {
     const {poster_url, id} = search.results;
-    let poster = "";
+    let poster;
     if (search.poster !== null) {
         poster = "data:image/png;base64," + search.poster;
     } else {
@@ -192,7 +171,7 @@ function addTopRatedThumb() {
 }
 
 function refreshPage() {
-    if (thumbsToLoad == 0) {
+    if (thumbsToLoad === 0) {
         indexElements();
         showPopularThumbs(1);
         showTopRatedThumbs(1);
@@ -203,13 +182,11 @@ function refreshPage() {
 }
 
 function indexElements() {
-    // find elements
     let i;
     let pThumb = 0;
     let tThumb = 0;
     popularThumbs = document.getElementsByClassName('popularThumb');
     topRatedThumbs = document.getElementsByClassName('topRatedThumb');
-    // set element id used by thumb slideshow and create event listeners
     for (i = 0; i < popularThumbs.length; i++) {
         pThumb++;
         popularThumbs[i].setAttribute('thumbId', pThumb + '');
@@ -242,7 +219,6 @@ function createEventListenerTopRatedThumb(i, thumb) {
     })
 }
 
-// Show and hide thumbs
 function showPopularThumbs(thumb) {
     let i;
     let visibleThumbs = 0;
@@ -294,3 +270,23 @@ function removeHidden() {
 function clamp(val, min, max) {
     return val < min ? min : (val > max ? max : val);
 }
+
+$(function () {
+    let popularThumb = $('.popular');
+    popularThumb.on("mouseover", function () {
+        $('#popularLabel-container').css('opacity', 0);
+    })
+    popularThumb.on("mouseleave", function () {
+        $('#popularLabel-container').css('opacity', 1);
+    })
+});
+
+$(function () {
+    let topRatedThumb = $('.topRated');
+    topRatedThumb.on("mouseover", function () {
+        $('#topRatedLabel-container').css('opacity', 0);
+    })
+    topRatedThumb.on("mouseleave", function () {
+        $('#topRatedLabel-container').css('opacity', 1);
+    })
+});

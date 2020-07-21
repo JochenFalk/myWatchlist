@@ -10,12 +10,12 @@ public class EmailConfig {
     private Properties mailProperties = new Properties();
 
     public EmailConfig() {
-        this.userName = "9158ddcfaae709";
-        this.userPass = "a4ce05f9430fd5";
+        this.userName = "my.watchlist.app@gmail.com";
+        this.userPass = "sgaetdldsdpiqyyi";
         mailProperties.put("mail.smtp.auth", "true");
-        mailProperties.put("mail.smtp.host", "smtp.mailtrap.io");
-        mailProperties.put("mail.smtp.port", "2525");
-        mailProperties.put("mail.smtp.starttls.enable", "true");
+        mailProperties.put("mail.smtp.host", "smtp.gmail.com");
+        mailProperties.put("mail.smtp.port", "465");
+        mailProperties.put("mail.smtp.ssl.enable", "true");
     }
 
     public String getUserName() {

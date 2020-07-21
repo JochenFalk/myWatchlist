@@ -1,6 +1,9 @@
 package com.company.business;
 
-import com.company.data.PostgreSystemQueries;
+import com.company.data.EmailQueries;
+import com.company.data.ListQueries;
+import com.company.data.MovieSearchQueries;
+import com.company.data.UserQueries;
 import com.company.data.model.Email;
 import com.company.data.model.Search;
 import com.company.data.model.User;
@@ -8,7 +11,6 @@ import com.company.data.model.Watchlist;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import javax.servlet.http.HttpSession;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.time.Instant;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 
 public class AdminBusiness {
 
-    public static HashMap<String, Object> getPrimaryQuery(String selection, HttpSession session) {
+    public static HashMap<String, Object> getPrimaryQuery(String selection) {
 
         ArrayList<String> dropDownOptions;
         HashMap<String, ArrayList<String>> queryResults;
@@ -26,7 +28,7 @@ public class AdminBusiness {
         switch (selection) {
             case "Users":
 
-                ArrayList<User> users = PostgreSystemQueries.getAllUsers();
+                ArrayList<User> users = UserQueries.getAllUsers();
 
                 ArrayList<String> userNames = getUserNames(users);
                 dropDownOptions = getDropDownOptions(users);
@@ -39,7 +41,7 @@ public class AdminBusiness {
 
             case "Lists":
 
-                ArrayList<Watchlist> watchlists = PostgreSystemQueries.getAllLists();
+                ArrayList<Watchlist> watchlists = ListQueries.getAllLists();
 
                 ArrayList<String> listTitles = getListTitles(watchlists);
                 dropDownOptions = getDropDownOptions(watchlists);
@@ -52,7 +54,7 @@ public class AdminBusiness {
 
             case "Search results":
 
-                ArrayList<Search> searches = PostgreSystemQueries.getAllSearches();
+                ArrayList<Search> searches = MovieSearchQueries.getAllSearches();
 
                 ArrayList<String> searchTitles = getSearchTitles(searches);
                 dropDownOptions = getDropDownOptions(searches);
@@ -65,7 +67,7 @@ public class AdminBusiness {
 
             case "Messages":
 
-                ArrayList<Email> emails = PostgreSystemQueries.getAllEmails();
+                ArrayList<Email> emails = EmailQueries.getAllEmails();
 
                 ArrayList<String> emailTypes = getEmailTypes(emails);
                 dropDownOptions = getDropDownOptions(emails);
@@ -197,7 +199,7 @@ public class AdminBusiness {
 
     public static HashMap<String, ArrayList<String>> getSearchQueryResults(ArrayList<Search> searches) {
 
-        HashMap<String, ArrayList<String>> resultMap = new HashMap<String, ArrayList<String>>();
+        HashMap<String, ArrayList<String>> resultMap = new HashMap<>();
 
         ArrayList<String> id = new ArrayList<>();
         ArrayList<String> title = new ArrayList<>();
@@ -267,7 +269,7 @@ public class AdminBusiness {
         return dropDownOptions;
     }
 
-    public static String saveRecord(String mappedValues, String loadedObject, String newQueryResults) {
+    public static String saveRecord(String mappedValues, String loadedObject, String newQueryResults, int itemIndex) {
 
         String returnMsg = "";
 
@@ -276,7 +278,7 @@ public class AdminBusiness {
                 returnMsg = updateUser(mappedValues);
                 break;
             case "Lists":
-                returnMsg = updateList(mappedValues, newQueryResults);
+                returnMsg = updateList(mappedValues, newQueryResults, itemIndex);
                 break;
             case "Search results":
                 returnMsg = updateSearch(mappedValues);
@@ -307,9 +309,9 @@ public class AdminBusiness {
             Instant tokenExpiryDate = Instant.parse(object.get("tokenExpiryDate").toString());
 
             User newUser = new User(id, role, name, password, emailAddress, isValidated, isRegistered, validationAttempts, token, tokenExpiryDate);
-            int returnStatement = PostgreSystemQueries.updateUser(newUser);
+            int returnStatement = UserQueries.updateUser(newUser);
 
-            JSONObject msg = new JSONObject();
+            net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
             if (returnStatement == 1) {
                 return "true";
@@ -325,17 +327,16 @@ public class AdminBusiness {
         return null;
     }
 
-    public static String updateList(String mappedValues, String newQueryResults) {
+    public static String updateList(String mappedValues, String newQueryResults, int itemIndex) {
 
         JSONObject valuesObject = (JSONObject) JSONValue.parse(mappedValues);
         JSONObject resultsObject = (JSONObject) JSONValue.parse(newQueryResults);
-
-        int index = Integer.parseInt(valuesObject.get("id").toString());
+        
         ArrayList titles = (ArrayList) resultsObject.get("title");
-        String previousTitle = titles.get(index).toString();
+        String previousTitle = titles.get(itemIndex).toString();
 
         Watchlist watchlist = null;
-        ArrayList<Watchlist> watchlists = PostgreSystemQueries.getAllLists();
+        ArrayList<Watchlist> watchlists = ListQueries.getAllLists();
 
         for (Watchlist thisWatchlist : watchlists) {
             boolean exists = thisWatchlist.getTitle().equals(previousTitle);
@@ -353,9 +354,9 @@ public class AdminBusiness {
                 ArrayList<Object> listItems = watchlist.getListItems();
 
                 Watchlist newWatchlist = new Watchlist(id, title, description, listItems);
-                int returnStatement = PostgreSystemQueries.updateList(newWatchlist);
+                int returnStatement = ListQueries.updateList(newWatchlist);
 
-                JSONObject msg = new JSONObject();
+                net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
                 if (returnStatement == 1) {
                     return "true";
@@ -385,9 +386,9 @@ public class AdminBusiness {
             Instant creationDate = Instant.parse(valuesObject.get("creationDate").toString());
 
             Search newSearch = new Search(id, title, year, returnValue, creationDate);
-            int returnStatement = PostgreSystemQueries.updateSearch(newSearch);
+            int returnStatement = MovieSearchQueries.updateSearch(newSearch);
 
-            JSONObject msg = new JSONObject();
+            net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
             if (returnStatement == 1) {
                 return "true";
@@ -416,13 +417,13 @@ public class AdminBusiness {
             String body = valuesObject.get("body").toString();
 
             Email newEmail = new Email(id, type, recipient, subject, body);
-            User user = PostgreSystemQueries.getUserByEmailId(id);
+            User user = UserQueries.getUserByEmailId(id);
 
             if (user != null) {
 
-                int returnStatement = PostgreSystemQueries.updateEmail(newEmail, user);
+                int returnStatement = EmailQueries.updateEmail(newEmail, user);
 
-                JSONObject msg = new JSONObject();
+                net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
                 if (returnStatement == 1) {
                     return "true";
@@ -466,9 +467,9 @@ public class AdminBusiness {
         JSONObject object = (JSONObject) JSONValue.parse(mappedValues);
 
         long id = Long.parseLong(object.get("id").toString());
-        int returnStatement = PostgreSystemQueries.deleteUserById(id);
+        int returnStatement = UserQueries.deleteUserById(id);
 
-        JSONObject msg = new JSONObject();
+        net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
         if (returnStatement == 1) {
             return "true";
@@ -483,9 +484,9 @@ public class AdminBusiness {
         JSONObject object = (JSONObject) JSONValue.parse(mappedValues);
 
         long id = Long.parseLong(object.get("id").toString());
-        int returnStatement = PostgreSystemQueries.deleteListById(id);
+        int returnStatement = ListQueries.deleteListById(id);
 
-        JSONObject msg = new JSONObject();
+        net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
         if (returnStatement == 1) {
             return "true";
@@ -500,9 +501,9 @@ public class AdminBusiness {
         JSONObject object = (JSONObject) JSONValue.parse(mappedValues);
 
         long id = Long.parseLong(object.get("id").toString());
-        int returnStatement = PostgreSystemQueries.deleteSearchById(id);
+        int returnStatement = MovieSearchQueries.deleteSearchById(id);
 
-        JSONObject msg = new JSONObject();
+        net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
         if (returnStatement == 1) {
             return "true";
@@ -517,9 +518,9 @@ public class AdminBusiness {
         JSONObject object = (JSONObject) JSONValue.parse(mappedValues);
 
         long id = Long.parseLong(object.get("id").toString());
-        int returnStatement = PostgreSystemQueries.deleteEmailById(id);
+        int returnStatement = EmailQueries.deleteEmailById(id);
 
-        JSONObject msg = new JSONObject();
+        net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
 
         if (returnStatement == 1) {
             return "true";

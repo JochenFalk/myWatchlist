@@ -41,6 +41,20 @@ function addCustomOptions() {
     });
 }
 
+function addEventListeners() {
+    window.addEventListener('click', function () {
+        for (const option of document.querySelectorAll(".custom-option")) {
+            option.addEventListener('click', function () {
+                if (!this.classList.contains('selected')) {
+                    this.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+                    this.classList.add('selected');
+                    this.closest('.custom-select').querySelector('.custom-select__trigger span').textContent = this.textContent;
+                }
+            })
+        }
+    });
+}
+
 function removeCustomOption(userLists, listTitle) {
 
     for (let i = 0; i < userLists.length; i++) {
@@ -72,6 +86,44 @@ function removeCustomOption(userLists, listTitle) {
     addCustomOptions();
 }
 
+function setCurrentList(listTitle) {
+
+    let url = "/setCurrentList";
+    let parameters = {
+        listTitle: listTitle
+    };
+
+    $.getJSON(url, parameters, callback);
+
+    function callback(data) {
+        return data;
+    }
+}
+
+function getCurrentList() {
+    promiseCurrentList = new Promise((resolve) => {
+        let url = '/getCurrentList';
+
+        $.getJSON(url, data => {
+            resolve(data);
+        })
+            .fail(function () {
+                resolve(null);
+            })
+    });
+}
+
+function getAllListsFromUser() {
+    promiseAllListsFromUser = new Promise((resolve) => {
+        let url = "/getAllListsFromUser";
+        $.getJSON(url, callback);
+
+        function callback(data) {
+            resolve(data);
+        }
+    });
+}
+
 function addMovieToCurrentList(searchResults) {
     getCurrentList();
     promiseCurrentList.then(data => {
@@ -88,7 +140,6 @@ function addMovieToCurrentList(searchResults) {
                 privateListItems = [];
                 privateListItems.push(newMovie);
             }
-
             let listTitle = data.title;
             let listItems = JSON.stringify(privateListItems);
             updatePrivateList(listTitle, listItems);
@@ -101,7 +152,6 @@ function addMovieToCurrentList(searchResults) {
                 publicListItems = [];
                 publicListItems.push(newMovie);
             }
-
             let listTitle = "movieList";
             let listItems = publicListItems;
             updatePublicList(listTitle, listItems);
@@ -125,9 +175,9 @@ function updatePrivateList(listTitle, listItems) {
         listItems: listItems
     };
 
-    $.getJSON(url, parameters, returnStatus);
+    $.getJSON(url, parameters, callback);
 
-    function returnStatus(data) {
+    function callback(data) {
         if (!data) {
             alertFailure("Oeps! An unknown error occurred. Please try again.", longTimeOut);
         }
@@ -138,74 +188,17 @@ function updatePublicList(listTitle, listItems) {
     setCookie(listTitle, listItems, NO_END_DATE);
 }
 
-// function addMovieToList(objectList, objectMovie) {
-//     let url = "/addMovieToList";
-//     let parameters = {
-//         objectList: objectList,
-//         objectMovie: objectMovie
-//     };
-//
-//     $.getJSON(url, parameters, returnStatus);
-//
-//     function returnStatus(data) {
-//         if (data) {
-//             alertSuccess("Movie was added to ", alertSuccessColor);
-//         } else {
-//             alertFailure("Oeps! The movie could not be added to your list :(", alertFailureColor);
-//         }
-//     }
-// }
-
-function setCurrentList(listTitle) {
-    let url = "/setCurrentList";
-    let parameters = {
-        listTitle: listTitle
-    };
-
-    $.getJSON(url, parameters, returnStatus);
-
-    function returnStatus(data) {
-        return data;
-    }
-}
-
-function getCurrentList() {
-    promiseCurrentList = new Promise((resolve, reject) => {
-        let url = '/getCurrentList';
-
-        $.getJSON(url, data => {
-            resolve(data);
-        })
-            .fail(function (data) {
-                resolve(null);
-            })
-    });
-}
-
-function getAllListsFromUser() {
-    promiseAllListsFromUser = new Promise((resolve, reject) => {
-        let url = "/getAllListsFromUser";
-        $.getJSON(url, returnStatus);
-
-        function returnStatus(data) {
-            resolve(data);
-        }
-    });
-}
-
-function setLoginStatusMessage() {
+function setOpeningStatusMessage() {
     getLoginStatus();
     promiseLoginStatus.then(data => {
-            if (data) {
-                $('#listFormList').css("pointer-events", "auto");
-                showListMessage("Let's make a new lists :)", alertSuccessColor);
-            } else {
-                $('#listFormList').css("pointer-events", "none");
-                showListMessage("You don't seem to be logged in :( Please login or sign up for a free account to create more lists.", alertFailureColor);
-            }
+        if (data) {
+            $('#listFormList').css("pointer-events", "auto");
+            showListMessage("Let's make a new lists :)", alertSuccessColor);
+        } else {
+            $('#listFormList').css("pointer-events", "none");
+            showListMessage("You don't seem to be logged in :( Please login or sign up for a free account to create more lists.", alertFailureColor);
         }
-    )
-    ;
+    });
 }
 
 function showListMessage(msg, color) {
@@ -219,12 +212,28 @@ function hideListMessage() {
     $('.listFormMessage').fadeOut(0);
 }
 
+function importPublicList() {
+    if (publicListItems !== null && publicListItems.length !== 0) {
+        $('.listForm').addClass('showListForm');
+        $('.listFormText').fadeOut(0);
+        $('.listFormReplyText').fadeIn(0);
+        $('#refreshListForm').fadeOut(0);
+        $('#closeListForm').fadeIn(0);
+        $('#listCreationSubmit').fadeOut(0);
+        $('#listImportSubmit').fadeIn(0);
+        showListMessage("You have a list stored in a cookie. Press the button above to import it to your account.", alertSuccessColor);
+        document.querySelector('.listTitle').innerHTML = "Import list";
+        document.querySelector('#listCreationName').value = "MyWatchlist";
+        $('#listCreationDescription').text("My first watchList");
+    }
+}
+
 $(function () {
     $('#list').on('click', function () {
         reloadPage = false;
         hideListMessage();
         addCustomOptions();
-        setLoginStatusMessage();
+        setOpeningStatusMessage();
         $('.listForm').addClass('showListForm');
     })
 });
@@ -262,7 +271,10 @@ $(function () {
 
 $(function () {
     $('#listFormSubmit').on('click', function () {
-        getLoginStatus();
+
+        getLoginStatus()
+        let loader = $('.loaderListBox');
+
         promiseLoginStatus.then(data => {
             if (data) {
                 hideListMessage();
@@ -278,11 +290,11 @@ $(function () {
                         listTitle: listName
                     };
 
-                    $.getJSON(url, parameters, returnStatus);
-                    $('.loaderListBox').fadeIn(FADEIN_TIME);
+                    $.getJSON(url, parameters, callback);
+                    loader.fadeIn(FADEIN_TIME);
 
-                    function returnStatus(data) {
-                        $('.loaderListBox').fadeOut(FADEOUT_TIME);
+                    function callback(data) {
+                        loader.fadeOut(FADEOUT_TIME);
                         setTimeout(function () {
                             if (data != null) {
                                 showListMessage('List retrieved successfully', alertSuccessColor);
@@ -307,7 +319,10 @@ $(function () {
 
 $(function () {
     $('#listFormDelete').on('click', function () {
+
         getLoginStatus();
+        let loader = $('.loaderListBox');
+
         promiseLoginStatus.then(data => {
             if (data) {
                 hideListMessage();
@@ -330,17 +345,16 @@ $(function () {
                             listTitle: listTitle
                         };
 
-                        $.getJSON(url, parameters, returnStatus);
-                        $('.loaderListBox').fadeIn(FADEIN_TIME);
+                        $.getJSON(url, parameters, callback);
+                        loader.fadeIn(FADEIN_TIME);
 
-                        function returnStatus(data) {
-                            $('.loaderListBox').fadeOut(FADEOUT_TIME);
+                        function callback(data) {
+                            loader.fadeOut(FADEOUT_TIME);
                             setTimeout(function () {
-                                if (data == true) {
+                                if (data === true) {
                                     getAllListsFromUser();
                                     promiseAllListsFromUser.then(data => {
-                                        let userLists = data;
-                                        removeCustomOption(userLists, listTitle);
+                                        removeCustomOption(data, listTitle);
                                     });
                                     showListMessage('Your list was successfully deleted', alertSuccessColor);
                                 } else {
@@ -376,7 +390,10 @@ $(function () {
 
 $(function () {
     $('#listCreationSubmit').on('click', function () {
+
             getLoginStatus();
+            let loader = $('.loaderListBox');
+
             promiseLoginStatus.then(data => {
                 if (data) {
                     hideListMessage();
@@ -395,11 +412,11 @@ $(function () {
                             listDesc: listDesc
                         };
 
-                        $.getJSON(url, parameters, returnStatus);
-                        $('.loaderListBox').fadeIn(FADEIN_TIME);
+                        $.getJSON(url, parameters, callback);
+                        loader.fadeIn(FADEIN_TIME);
 
-                        function returnStatus(responseJSON) {
-                            $('.loaderListBox').fadeOut(FADEOUT_TIME);
+                        function callback(responseJSON) {
+                            loader.fadeOut(FADEOUT_TIME);
                             setTimeout(function () {
                                 if (responseJSON === true) {
                                     setCurrentList(listTitle);
@@ -426,7 +443,10 @@ $(function () {
 
 $(function () {
     $('#listImportSubmit').on('click', function () {
+
             getLoginStatus();
+            let loader = $('.loaderListBox');
+
             promiseLoginStatus.then(data => {
                 if (data) {
                     hideListMessage();
@@ -447,20 +467,21 @@ $(function () {
                             listItems: listItems
                         };
 
-                        $.getJSON(url, parameters, returnStatus);
-                        $('.loaderLoginBox').fadeIn(FADEIN_TIME);
+                        $.getJSON(url, parameters, callback);
+                        loader.fadeIn(FADEIN_TIME);
 
-                        function returnStatus(data) {
-                            $('.loaderListBox').fadeOut(FADEOUT_TIME);
-                            $('listFormMessage').fadeOut(FADEOUT_TIME);
-                            if (data == true) {
-                                showListMessage('Your list has been imported :)', alertSuccessColor);
+                        function callback(data) {
+                            loader.fadeOut(FADEOUT_TIME);
+                            if (data === true) {
                                 setTimeout(function () {
+                                    showListMessage('Your list has been imported :)', alertSuccessColor);
                                     setCurrentList(listTitle);
                                     deleteCookie("movieList");
-                                    window.location.href = "/listPage";
+                                    setTimeout(function () {
+                                        window.location.href = "/listPage";
+                                    }, shortTimeOut);
                                 }, shortTimeOut)
-                            } else if (data == false) {
+                            } else if (data === false) {
                                 showListMessage('Oeps! Something went wrong. Please try again.', alertFailureColor);
                             }
                         }
@@ -478,17 +499,3 @@ $(function () {
         this.querySelector('.custom-select').classList.toggle('open');
     })
 });
-
-function addEventListeners() {
-    window.addEventListener('click', function (e) {
-        for (const option of document.querySelectorAll(".custom-option")) {
-            option.addEventListener('click', function () {
-                if (!this.classList.contains('selected')) {
-                    this.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
-                    this.classList.add('selected');
-                    this.closest('.custom-select').querySelector('.custom-select__trigger span').textContent = this.textContent;
-                }
-            })
-        }
-    });
-}

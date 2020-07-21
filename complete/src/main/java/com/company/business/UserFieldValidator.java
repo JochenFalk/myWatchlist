@@ -24,11 +24,10 @@ public class UserFieldValidator {
     @ContainDigit
     @NotBlank
     private static String userPassValidated;
-    private static String userEmailValidated;
 
-    private iUserCreationEventListener userCreationEventListener;
+    private IUserCreationEventListener userCreationEventListener;
 
-    public void registerUserCreationEventListener(iUserCreationEventListener userCreationEventListener)
+    public void registerUserCreationEventListener(IUserCreationEventListener userCreationEventListener)
     {
         this.userCreationEventListener = userCreationEventListener;
     }
@@ -37,6 +36,7 @@ public class UserFieldValidator {
         userNameValidated = userName;
         userPassValidated = userPass;
         EmailValidator validator = EmailValidator.getInstance();
+        String userEmailValidated;
         if (validator.isValid(userEmail)) {
             userEmailValidated = userEmail;
         } else {

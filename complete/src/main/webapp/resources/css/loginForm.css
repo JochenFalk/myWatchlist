@@ -1,7 +1,3 @@
-input::-ms-reveal, input::-ms-clear {
-    display: none;
-}
-
 .loginForm {
     display: flex;
     align-items: center;
@@ -103,8 +99,8 @@ input::-ms-reveal, input::-ms-clear {
 .formWrapLoginForm input:-webkit-autofill:hover,
 .formWrapLoginForm input:-webkit-autofill:focus,
 .formWrapLoginForm input:-webkit-autofill:active {
-    caret-color: dimgray;
-    -webkit-text-fill-color: dimgray;
+    caret-color: lightgrey;
+    -webkit-text-fill-color: lightgrey;
     -webkit-box-shadow: 0 0 0 30px #222426 inset !important;
 }
 

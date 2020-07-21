@@ -23,8 +23,8 @@ public class UserController {
 
     @GetMapping("/login")
     public String login(HttpSession session,
-                        @RequestParam(value = "userName", required = true) String userName,
-                        @RequestParam(value = "userPass", required = true) String userPass) {
+                        @RequestParam(value = "userName") String userName,
+                        @RequestParam(value = "userPass") String userPass) {
         return UserBusiness.login(userName, userPass, session);
     }
 
@@ -40,22 +40,22 @@ public class UserController {
 
     @GetMapping("/createUser")
     public String createUser(
-            @RequestParam(value = "userName", required = true) String userName,
-            @RequestParam(value = "userPass", required = true) String userPass,
-            @RequestParam(value = "userEmail", required = true) String userEmail) {
+            @RequestParam(value = "userName") String userName,
+            @RequestParam(value = "userPass") String userPass,
+            @RequestParam(value = "userEmail") String userEmail) {
         return UserBusiness.createUser(userName, userPass, userEmail);
     }
 
     @GetMapping("/isVerifiedUser")
     public Boolean isVerifiedUser(HttpSession session,
-                                  @RequestParam(value = "userName", required = true) String userName,
-                                  @RequestParam(value = "userPass", required = true) String userPass) {
+                                  @RequestParam(value = "userName") String userName,
+                                  @RequestParam(value = "userPass") String userPass) {
         return UserBusiness.isVerifiedUser(userName, userPass, session);
     }
 
     @GetMapping("/requestLink")
     public Boolean requestLink(
-            @RequestParam(value = "userEmail", required = true) String userEmail) {
+            @RequestParam(value = "userEmail") String userEmail) {
         return UserBusiness.requestLink(userEmail);
     }
 }

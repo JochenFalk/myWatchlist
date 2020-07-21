@@ -1,3 +1,4 @@
+
 function searchResultAnimation() {
     // Get values for animation
     let imageContainer = document.getElementById('searchPoster');
@@ -74,8 +75,6 @@ function showSlideAnimation(i, move, animationDuration) {
             easing: "ease-in-out",
             iterations: 1
         };
-        // known error caused on resizing of screen due to unknown issue with slideHeight variable?
-        //     update: suspect issue is caused by calling animation when "move" == 0
         let animation = slide.animate(slide.keyframes, slide.animProps);
     }
 }

@@ -1,14 +1,13 @@
 package com.company.business;
 
-import com.company.data.PostgreSystemQueries;
+import com.company.data.UserQueries;
 import com.company.data.model.User;
-import net.minidev.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class newUserCreationValidator implements iUserCreationEventListener {
+public class NewUserCreationValidator implements IUserCreationEventListener {
 
     private static final String USERNAME_REGEX = "^[a-zA-Z0-9_]{6,12}$";
     private static final String USERPASS_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,12}$";
@@ -16,24 +15,22 @@ public class newUserCreationValidator implements iUserCreationEventListener {
 
     @Override
     public String validate(String userNameValidated, String userPassValidated, String userEmailValidated) {
+
+        net.minidev.json.JSONObject msg = new net.minidev.json.JSONObject();
+
         if (isExistingUserName(userNameValidated)) {
-            JSONObject msg = new JSONObject();
             msg.put("msg", "The username already exists");
             return msg.toString();
         } else if (!validateUserName(userNameValidated)) {
-            JSONObject msg = new JSONObject();
             msg.put("msg", "The provided username is not valid. Please check the tooltip for requirements");
             return msg.toString();
         } else if (!validateUserPass(userPassValidated)) {
-            JSONObject msg = new JSONObject();
             msg.put("msg", "The provided password is not valid. Please check the tooltip for requirements");
             return msg.toString();
         } else if (isExistingUserEmail(userEmailValidated)) {
-            JSONObject msg = new JSONObject();
             msg.put("msg", "The provided email is already registered with another user");
             return msg.toString();
         } else if (!validateUserEmail(userEmailValidated) && !userEmailValidated.isEmpty()) {
-            JSONObject msg = new JSONObject();
             msg.put("msg", "The provided email is not valid. Please check the tooltip for requirements");
             return msg.toString();
         }else {
@@ -42,7 +39,7 @@ public class newUserCreationValidator implements iUserCreationEventListener {
     }
 
     public static Boolean isExistingUserName(String userNameValidated) {
-        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
+        ArrayList<User> users = UserQueries.getAllUsers();
         for (User thisUser : users) {
             if (userNameValidated.equals(thisUser.getName())) {
                 return true;
@@ -52,7 +49,7 @@ public class newUserCreationValidator implements iUserCreationEventListener {
     }
 
     public static Boolean isExistingUserEmail(String userEmailValidated) {
-        ArrayList<User> users = PostgreSystemQueries.getAllUsers();
+        ArrayList<User> users = UserQueries.getAllUsers();
         for (User thisUser : users) {
             if (userEmailValidated.equals(thisUser.getEmailAddress())) {
                 return true;

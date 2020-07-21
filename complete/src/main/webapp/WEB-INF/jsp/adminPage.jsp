@@ -6,6 +6,7 @@
     <meta name=description content="Create watchlist of your favourite movies">
     <meta name=keywords content="movies, favourite, watch, watchlist, create">
     <title>Home - My watchlist</title>
+    <link href="<c:url value="/resources/css/commonStyles.css" />" rel="stylesheet"> <%--keep at the top so other style sheets can override it--%>
     <link href="<c:url value="/resources/css/adminPage.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/adminBox.css" />" rel="stylesheet">
     <link href="<c:url value="/resources/css/searchBox.css" />" rel="stylesheet">
@@ -34,13 +35,13 @@
 <div id="content" class="hide un-hide">
     <nav class="nav">
         <div class="logo">
-            <a href="listPage"><img src="../../resources/images/logo.png" height="40" width="30" alt="Home"/></a>
+            <a href="listPage"><img src="../../resources/images/logo.png" alt="Home"/></a>
         </div>
         <div class="navButtons"><a href="homePage">Home</a></div>
-        <div id="list" class="navButtons"><a href="javascript:void(null);">lists</a></div>
-        <div id="Search" class="navButtons"><a href="javascript:void(null);">Search</a></div>
-        <div id="login" class="navButtons"><a href="javascript:void(null);">Login</a></div>
-        <div id="account" class="hide navButtons"><a href="javascript:void(null);">account</a></div>
+        <div id="list" class="navButtons"><a href="javascript:null;">lists</a></div>
+        <div id="Search" class="navButtons"><a href="javascript:null;">Search</a></div>
+        <div id="login" class="navButtons"><a href="javascript:null;">Login</a></div>
+        <div id="account" class="hide navButtons"><a href="javascript:null;">account</a></div>
     </nav>
     <div id="root" class="main"></div>
 </div>
@@ -58,8 +59,8 @@
             </form>
             <input id="adminBoxDeleteButton" class="button" value="Delete record"/>
             <input id="adminBoxSaveButton" class="button" value="Save record"/>
-            <!--        hidden message box-->
-            <div class="adminFormMessage">...</div>
+<%--            <!--        hidden message box-->--%>
+<%--            <div class="adminFormMessage">...</div>--%>
         </div>
         <img id="closeAdminBox" src="../../resources/images/close-150x150.png" alt="">
     </div>
@@ -118,7 +119,6 @@
                 <img src="../../resources/images/questionmark-150x150.png" alt="">
                 <span class="tooltipText">
                     <span>Length: 6 to 12 characters</span><br>
-                    <!--                    <span>Only alphanumerical characters</span><br>-->
                     <span>Must contain 1 letter</span><br>
                     <span>No consecutive "." or "_"</span><br>
                     <span>No "." followed by "_" or visa versa</span><br>
