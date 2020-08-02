@@ -94,11 +94,14 @@ public class UserBusiness {
     }
 
     public static Boolean requestLink(String emailAddress) {
-        if (login(emailAddress)) {
-            User user = getUserByEmail(emailAddress);
-            if (user != null) {
-                EmailBusiness.resendConfirmationEmail(user);
-                return true;
+        ArrayList<User> users = UserQueries.getAllUsers();
+        for (User thisUser : users) {
+            if (thisUser.getEmailAddress().equals(emailAddress)) {
+                User user = getUserByEmail(emailAddress);
+                if (user != null) {
+                    EmailBusiness.resendConfirmationEmail(user);
+                    return true;
+                }
             }
         }
         return false;
@@ -175,16 +178,6 @@ public class UserBusiness {
             return null;
         }
 
-    }
-
-    public static Boolean login(String userEmail) {
-        ArrayList<User> users = UserQueries.getAllUsers();
-        for (User thisUser : users) {
-            if (thisUser.getEmailAddress().equals(userEmail)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static String encryptPassword(String password) {
