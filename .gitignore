@@ -18,3 +18,5 @@ README.html
 .idea
 /ApplicationConfig.java
 /EmailConfig.java
+complete/src/main/java/com/company/data/model/EmailConfig.java
+complete/src/main/java/com/company/data/model/ApplicationConfig.java
