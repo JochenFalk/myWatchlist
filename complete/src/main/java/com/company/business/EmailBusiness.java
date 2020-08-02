@@ -58,6 +58,8 @@ public class EmailBusiness {
 
     private static void sendEmail(Email email, User user) {
 
+        // TODO: Add return message if application failed to connect to smtp host
+
         Session session = Session.getDefaultInstance(emailConfig.getMailProperties(), new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(emailConfig.getUserName(), emailConfig.getUserPass());
@@ -90,7 +92,7 @@ public class EmailBusiness {
 
     private static void insertEmail(Email email, User user) {
 
-        // TODO: known issue: replace dirty while loop with interface callback
+        // TODO: Replace dirty while loop with interface callback
 
         long userId;
 

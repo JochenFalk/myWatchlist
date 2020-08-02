@@ -100,7 +100,7 @@
         --maxSlideShowHeight: 225px;
     }
 
-    .cast > img {
+    #content .cast > img {
         max-height: 148px;
     }
 

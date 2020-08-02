@@ -49,7 +49,7 @@
 <div class="adminBox">
     <div class="adminBox-Inner">
         <div class="adminBoxText">
-            <h1>Do admin stuff</h1>
+            <h1>Edit record</h1>
             <form class="adminFormWrap" action="#" novalidate>
                 <div id="templateInput" class="hide input-container">
                     <span id="label" for="input">test label</span>

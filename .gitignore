@@ -16,5 +16,5 @@ dependency-reduced-pom.xml
 README.html
 *.iml
 .idea
-ApplicationConfig.java
-EmailConfig.java
+/ApplicationConfig.java
+/EmailConfig.java
