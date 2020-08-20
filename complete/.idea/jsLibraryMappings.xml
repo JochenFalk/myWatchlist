@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$" libraries="{@babel/standalone, babel-standalone, font-awesome, react, react-dom}" />
+    <file url="PROJECT" libraries="{@types/jquery, @types/jquery-ajax-chain, jquery}" />
+    <includedPredefinedLibrary name="HTTP Response Handler" />
+  </component>
+</project>
