@@ -14,8 +14,8 @@ dependency-reduced-pom.xml
 /scratch
 .gradle
 README.html
-/*.iml
-/.idea
+*.iml
+.idea
 /ApplicationConfig.java
 /EmailConfig.java
 complete/src/main/java/com/company/data/model/EmailConfig.java
